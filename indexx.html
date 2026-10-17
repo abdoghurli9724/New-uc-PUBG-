@@ -1,0 +1,2687 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#05070c">
+<title>LevelUp — شدات ببجي موبايل</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 6 L58 32 L32 58 L6 32 Z' fill='none' stroke='%2300e5b0' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%2300e5b0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070c; --bg2:#0a0e16; --card:rgba(16,23,36,.72);
+  --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.14);
+  --accent:#00e5b0; --accent2:#00a3ff; --gold:#ffc848; --danger:#ff4d6a;
+  --txt:#f0f6fc; --mut:#8296ad; --radius:18px;
+  --grad:linear-gradient(135deg,#00e5b0,#00a3ff);
+  --grad-lux:linear-gradient(135deg,#00e5b0 0%,#00a3ff 45%,#8b5cf6 100%);
+  --shadow:0 20px 60px rgba(0,0,0,.55); --glow:0 0 35px rgba(0,229,176,.25);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;font-family:'Cairo',sans-serif;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+::selection{background:rgba(0,229,176,.35);color:#fff}
+::-webkit-scrollbar{width:0}a{color:var(--accent);text-decoration:none}
+
+/* ═══ خلفية النجوم المتحركة ═══ */
+.starfield{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.7;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 22%,rgba(255,255,255,.7),transparent),
+    radial-gradient(1px 1px at 34% 68%,rgba(255,255,255,.5),transparent),
+    radial-gradient(1.8px 1.8px at 58% 14%,rgba(0,229,176,.6),transparent),
+    radial-gradient(1px 1px at 76% 44%,rgba(255,255,255,.55),transparent),
+    radial-gradient(1.6px 1.6px at 88% 82%,rgba(0,163,255,.55),transparent),
+    radial-gradient(1px 1px at 22% 86%,rgba(255,255,255,.4),transparent),
+    radial-gradient(1.4px 1.4px at 64% 92%,rgba(139,92,246,.5),transparent),
+    radial-gradient(1px 1px at 44% 40%,rgba(255,255,255,.35),transparent);
+  animation:twinkle 7s ease-in-out infinite alternate}
+@keyframes twinkle{0%{opacity:.35}50%{opacity:.85}100%{opacity:.4}}
+
+.aurora{position:fixed;border-radius:50%;filter:blur(90px);z-index:0;pointer-events:none;animation:drift 18s ease-in-out infinite alternate}
+.aurora.a1{width:440px;height:440px;background:rgba(0,229,176,.09);top:-150px;inset-inline-end:-120px}
+.aurora.a2{width:400px;height:400px;background:rgba(0,163,255,.08);bottom:-140px;inset-inline-start:-120px;animation-delay:-9s}
+@keyframes drift{from{transform:scale(1)}to{transform:translate(-40px,50px) scale(1.15)}}
+
+/* ═══ ⚡ شعار النيون — خط يُرسم من نقطة ═══ */
+.neon-logo{display:grid;place-items:center;filter:drop-shadow(0 0 8px rgba(0,229,176,.7)) drop-shadow(0 0 22px rgba(0,229,176,.35))}
+.neon-logo svg{overflow:visible}
+.neon-logo .nl-dot{opacity:0;animation:nlDot 1s var(--ease) .1s forwards}
+.neon-logo .nl-line{stroke-dasharray:400;stroke-dashoffset:400;animation:nlDraw 2.2s var(--ease) .35s forwards}
+.neon-logo .nl-core{opacity:0;animation:nlCore .8s var(--ease) 2.2s forwards}
+.neon-logo.loop .nl-line{animation:nlDraw 2.2s var(--ease) .35s forwards, nlPulse 3s ease-in-out 3s infinite}
+@keyframes nlDot{0%{opacity:0;transform:scale(0)}60%{transform:scale(1.5)}100%{opacity:1;transform:scale(1)}}
+@keyframes nlDraw{to{stroke-dashoffset:0}}
+@keyframes nlCore{to{opacity:1}}
+@keyframes nlPulse{0%,100%{filter:drop-shadow(0 0 4px rgba(0,229,176,.5))}50%{filter:drop-shadow(0 0 14px rgba(0,229,176,1))}}
+.auth-logo .neon-logo svg,.logo .neon-logo svg{animation:none}
+.auth-logo .nl-line,.logo .nl-line{stroke-dasharray:400;stroke-dashoffset:400;animation:nlDraw 2.2s var(--ease) .35s forwards}
+
+/* ═══ تسجيل الدخول / حساب جديد ═══ */
+.auth-wrap{position:fixed;inset:0;z-index:500;display:flex;align-items:flex-start;justify-content:center;padding:18px;
+  overflow-y:auto;background:radial-gradient(700px 400px at 50% 0%,rgba(0,229,176,.06),transparent),var(--bg)}
+.auth-card{width:100%;max-width:410px;max-height:94vh;overflow-y:auto;background:var(--card);border:1px solid var(--line2);
+  border-radius:26px;padding:26px 22px;margin:auto;backdrop-filter:blur(20px);box-shadow:var(--shadow);
+  animation:authIn .6s var(--ease);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.auth-card:before{content:"";position:absolute;top:0;left:-60%;width:60%;height:100%;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.05),transparent);animation:sheen 5s ease-in-out infinite}
+@keyframes sheen{0%{left:-60%}55%,100%{left:130%}}
+@keyframes authIn{from{opacity:0;transform:translateY(30px) scale(.96)}}
+.auth-logo{text-align:center;margin-bottom:22px}
+.auth-logo .neon-logo{width:70px;height:70px;margin:0 auto 12px;border-radius:20px;background:rgba(0,229,176,.05);
+  border:1px solid rgba(0,229,176,.25)}
+.auth-logo h1{font-size:22px;font-weight:900}
+.auth-logo h1 span{background:var(--grad-lux);-webkit-background-clip:text;background-clip:text;color:transparent}
+.auth-logo p{font-size:12.5px;color:var(--mut);margin-top:4px}
+.auth-tabs{display:flex;background:rgba(0,0,0,.3);border-radius:13px;padding:4px;margin-bottom:20px}
+.auth-tab{flex:1;padding:10px;border:none;background:none;color:var(--mut);font-weight:800;font-size:13.5px;border-radius:10px;cursor:pointer;transition:.3s}
+.auth-tab.on{background:var(--grad);color:#04211f;box-shadow:0 0 18px rgba(0,229,176,.35)}
+.fgroup{margin-bottom:14px}
+.fgroup label{font-size:12.5px;color:var(--mut);display:block;margin-bottom:6px;font-weight:700}
+.fgroup input,.fgroup select,.fgroup textarea{width:100%;padding:13px 15px;border-radius:13px;border:1px solid var(--line);background:rgba(0,0,0,.3);
+  color:var(--txt);font-size:14px;outline:none;transition:.3s;font-family:'Cairo',sans-serif}
+.fgroup input:focus,.fgroup select:focus,.fgroup textarea:focus{border-color:rgba(0,229,176,.55);box-shadow:var(--glow);background:rgba(0,0,0,.42)}
+.phone-row{display:flex;gap:8px}
+.phone-row select{width:40%}
+.phone-row input{width:60%}
+.btn{width:100%;padding:14px;border:none;border-radius:14px;background:var(--grad);color:#04211f;font-weight:900;font-size:14.5px;
+  cursor:pointer;transition:.3s;position:relative;overflow:hidden}
+.btn:before{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.45),transparent);transition:left .6s ease}
+.btn:hover:before{left:130%}
+.btn:hover{box-shadow:0 0 30px rgba(0,229,176,.45);transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+.btn.gray{background:rgba(255,255,255,.06);color:var(--txt);border:1px solid var(--line2)}
+.btn.red{background:linear-gradient(135deg,var(--danger),#ff7854);color:#fff}
+.btn.gold{background:linear-gradient(135deg,var(--gold),#ff9d48);color:#3a2500}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.5);transform:scale(0);animation:rip .6s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(3.2);opacity:0}}
+.msg{min-height:22px;font-size:13px;margin-top:10px;text-align:center;font-weight:600}
+.ok{color:var(--accent);text-shadow:0 0 12px rgba(0,229,176,.5)}.err{color:var(--danger)}
+.spin{display:inline-block;width:15px;height:15px;border:2.5px solid rgba(4,33,31,.25);border-top-color:#04211f;border-radius:50%;
+  animation:sp .7s linear infinite;vertical-align:-3px;margin-inline-end:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.auth-note{font-size:11px;color:var(--mut);text-align:center;margin-top:14px;line-height:1.8}
+.cloud-status{text-align:center;font-size:11px;margin-top:8px;font-weight:700}
+.cloud-ok{color:var(--accent)}.cloud-bad{color:var(--danger)}
+
+/* ═══ التطبيق ═══ */
+.app{max-width:520px;margin:0 auto;min-height:100vh;position:relative;z-index:1;padding-bottom:92px;display:none}
+body.logged .app{display:block}
+body.logged .auth-wrap{display:none}
+.page{display:none;animation:pageIn .45s var(--ease)}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(18px)}}
+header{position:sticky;top:0;z-index:50;background:rgba(5,7,12,.72);backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
+header:after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,229,176,.6),transparent)}
+.hwrap{display:flex;align-items:center;justify-content:space-between;padding:13px 16px}
+.logo{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:900}
+.logo .neon-logo{width:38px;height:38px;border-radius:12px;background:rgba(0,229,176,.05);border:1px solid rgba(0,229,176,.25)}
+.logo .lg-span{background:var(--grad-lux);-webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:200% auto;animation:shine 4s linear infinite}
+.hdr-actions{display:flex;align-items:center;gap:8px}
+.admin-btn{background:var(--card);border:1px solid rgba(255,200,72,.4);border-radius:99px;width:40px;height:40px;
+  display:none;place-items:center;font-size:17px;cursor:pointer;transition:.25s}
+.admin-btn:hover{box-shadow:0 0 18px rgba(255,200,72,.4)}
+.admin-btn.show{display:grid}
+.mail-btn{position:relative;background:var(--card);border:1px solid var(--line2);border-radius:99px;width:40px;height:40px;
+  display:grid;place-items:center;font-size:17px;cursor:pointer;transition:.25s}
+.mail-btn:hover{box-shadow:var(--glow);border-color:rgba(0,229,176,.4)}
+.mail-btn:active{transform:scale(.92)}
+.mail-badge{position:absolute;top:-5px;inset-inline-start:-5px;background:linear-gradient(135deg,var(--danger),#ff7854);color:#fff;
+  font-size:10px;font-weight:900;min-width:19px;height:19px;border-radius:99px;display:grid;place-items:center;padding:0 4px;
+  box-shadow:0 2px 8px rgba(255,77,106,.5);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.balance-pill{background:var(--card);border:1px solid var(--line2);border-radius:99px;padding:10px 15px;font-size:12.5px;color:var(--mut);
+  font-weight:700;cursor:pointer;transition:.3s}
+.balance-pill:hover{border-color:rgba(0,229,176,.45);box-shadow:var(--glow)}
+.balance-pill b{color:var(--accent)}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:center;
+  background:rgba(8,11,18,.85);backdrop-filter:blur(24px);border-top:1px solid var(--line);
+  padding:8px 10px max(12px,env(safe-area-inset-bottom))}
+nav:before{content:"";position:absolute;top:-1px;left:20%;right:20%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,229,176,.5),transparent)}
+.nav-inner{display:flex;width:100%;max-width:520px}
+.tab{flex:1;background:none;border:none;color:var(--mut);font-size:10.5px;font-weight:700;padding:6px 2px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;transition:color .3s;position:relative}
+.tab svg{width:23px;height:23px;transition:transform .35s var(--ease)}
+.tab.active{color:var(--accent)}
+.tab.active svg{transform:translateY(-2px) scale(1.08);filter:drop-shadow(0 0 8px rgba(0,229,176,.6))}
+
+.hero{margin:16px 16px 0;padding:26px 22px;border-radius:24px;position:relative;overflow:hidden;
+  background:linear-gradient(125deg,rgba(13,27,42,.9),rgba(10,32,48,.8) 50%,rgba(8,40,31,.8));border:1px solid var(--line2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 10px 40px rgba(0,0,0,.35)}
+.hero:before{content:"";position:absolute;top:0;left:-60%;width:60%;height:100%;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.04),transparent);animation:sheen 6s ease-in-out 1s infinite}
+.hero h1{font-size:21px;font-weight:900;line-height:1.6}
+.hero h1 .lux{background:var(--grad-lux);-webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:200% auto;animation:shine 4s linear infinite;filter:drop-shadow(0 0 10px rgba(0,229,176,.25))}
+@keyframes shine{to{background-position:200% center}}
+.hero p{color:var(--mut);font-size:13px;margin-top:6px}
+.toolbar{display:flex;flex-direction:column;gap:10px;margin:16px 16px 0}
+.search-box{display:flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:15px;padding:0 15px;gap:9px;transition:.3s}
+.search-box:focus-within{border-color:rgba(0,229,176,.55);box-shadow:var(--glow)}
+.search-box input{flex:1;background:none;border:none;padding:13px 0;color:var(--txt);font-size:14px;outline:none}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.chip{flex-shrink:0;padding:8px 17px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--mut);
+  font-size:12.5px;font-weight:700;cursor:pointer;transition:.3s}
+.chip:hover{color:var(--txt);border-color:rgba(0,229,176,.4)}
+.chip.on{background:var(--grad);color:#04211f;box-shadow:0 0 16px rgba(0,229,176,.35)}
+.sec-head{display:flex;justify-between:flex-start;align-items:baseline;margin:20px 16px 12px;justify-content:space-between}
+.sec-head h2{font-size:17px;font-weight:900}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:0 16px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;animation:itemIn .55s var(--ease) both;
+  transition:transform .35s var(--ease),box-shadow .35s,border-color .35s}
+.item:hover{transform:translateY(-5px);border-color:rgba(0,229,176,.4);box-shadow:0 14px 40px rgba(0,0,0,.5),var(--glow)}
+@keyframes itemIn{from{opacity:0;transform:translateY(20px) scale(.96)}}
+.thumb{height:130px;display:grid;place-items:center;font-size:50px;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,rgba(22,32,47,.9),rgba(10,14,22,.9));cursor:pointer}
+.thumb:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 120%,rgba(0,229,176,.14),transparent 60%)}
+.thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+.item:hover .thumb img{transform:scale(1.07)}
+.img-count{position:absolute;bottom:7px;inset-inline-end:7px;background:rgba(0,0,0,.65);border-radius:99px;padding:2px 9px;
+  font-size:10px;font-weight:800;color:#fff;z-index:2}
+.tag{position:absolute;top:9px;inset-inline-start:9px;background:linear-gradient(135deg,var(--danger),#ff7854);color:#fff;font-size:10px;
+  font-weight:900;padding:3px 10px;border-radius:99px;z-index:2;box-shadow:0 3px 12px rgba(255,77,106,.4)}
+.tag.green{background:var(--grad);color:#04211f;box-shadow:0 3px 12px rgba(0,229,176,.4)}
+.body{padding:12px}
+.item h3{font-size:13.5px;font-weight:800}
+.item .desc{font-size:11px;color:var(--mut);min-height:28px;margin-top:2px;line-height:1.6}
+.price{color:var(--accent);font-weight:900;font-size:16.5px;text-shadow:0 0 14px rgba(0,229,176,.35)}
+.price s{color:var(--mut);font-size:11.5px;font-weight:400}
+.buy{width:100%;padding:10px;margin-top:8px;border:none;border-radius:11px;background:var(--grad);color:#04211f;font-weight:900;
+  font-size:12.5px;cursor:pointer;position:relative;overflow:hidden;transition:.3s}
+.buy:before{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.45),transparent);transition:left .6s ease}
+.buy:hover:before{left:130%}
+.buy:hover{box-shadow:0 0 22px rgba(0,229,176,.45)}
+.empty{grid-column:1/-1;text-align:center;color:var(--mut);padding:60px 0;font-size:14px}
+
+.offer-banner{margin:16px;padding:26px 22px;border-radius:22px;text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(120deg,#1a1030,#0d1b3a 55%,#0a2e28);border:1px solid var(--line2)}
+.offer-banner:before{content:"";position:absolute;top:0;left:-60%;width:50%;height:100%;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.06),transparent);animation:sheen 5s ease-in-out infinite}
+.offer-banner .big{font-size:34px;font-weight:900;background:var(--grad-lux);-webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:200% auto;animation:shine 4s linear infinite}
+.offer-banner p{color:var(--mut);font-size:13px;margin-top:6px}
+.promo-strip{margin:0 16px 12px;padding:14px 16px;border-radius:16px;border:1px dashed rgba(255,200,72,.4);
+  background:rgba(255,200,72,.06);display:flex;align-items:center;gap:12px;animation:itemIn .5s var(--ease) both}
+.promo-strip .pi{font-size:24px;animation:floaty 3s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.promo-strip b{font-size:13px;display:block;color:var(--gold)}
+.promo-strip span{font-size:11px;color:var(--mut)}
+.timer-strip{display:flex;justify-content:center;gap:9px;margin:14px 16px 20px}
+.tbox{background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:10px 0;width:62px;text-align:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.tbox b{display:block;font-size:20px;font-weight:900;color:var(--gold);text-shadow:0 0 14px rgba(255,200,72,.45)}
+.tbox span{font-size:10px;color:var(--mut)}
+.timer-ended{margin:0 16px 16px;padding:14px;border-radius:14px;text-align:center;font-size:13px;font-weight:800;
+  background:rgba(255,77,106,.1);border:1px dashed rgba(255,77,106,.4);color:var(--danger);display:none}
+.deal{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px;margin:0 16px 12px;transition:transform .3s var(--ease),box-shadow .3s,border-color .3s;animation:itemIn .5s var(--ease) both}
+.deal:hover{transform:translateY(-3px);border-color:rgba(0,229,176,.35);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.deal .ic{width:52px;height:52px;border-radius:14px;background:rgba(0,229,176,.09);display:grid;place-items:center;font-size:25px;overflow:hidden}
+.deal .ic img{width:100%;height:100%;object-fit:cover}
+.deal .inf{flex:1}.deal b{font-size:14px;display:block}
+.deal .p{color:var(--accent);font-weight:900;font-size:15px}
+.deal .p s{color:var(--mut);font-size:12px;font-weight:400;margin-inline-start:6px}
+.deal .go{background:var(--grad);border:none;color:#04211f;font-weight:900;font-size:12px;border-radius:99px;padding:9px 18px;cursor:pointer;transition:.3s}
+.deal .go:hover{box-shadow:0 0 18px rgba(0,229,176,.5)}
+
+.balance-card{margin:16px;padding:30px 22px;border-radius:24px;text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(130deg,#0a2e28,#0d1b3a 60%,#1a1030);border:1px solid transparent;
+  background-clip:padding-box}
+.balance-card:before{content:"";position:absolute;inset:-2px;border-radius:26px;padding:2px;z-index:-1;
+  background:conic-gradient(from var(--bAng,0deg),#00e5b0,#00a3ff,#8b5cf6,#00e5b0);
+  animation:borderSpin 6s linear infinite}
+@property --bAng{syntax:'<angle>';initial-value:0deg;inherits:false}
+@keyframes borderSpin{to{--bAng:360deg}}
+.balance-card .lbl{font-size:12.5px;color:var(--mut)}
+.balance-card .val{font-size:42px;font-weight:900;margin-top:6px;background:var(--grad-lux);-webkit-background-clip:text;
+  background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(0,229,176,.3))}
+.balance-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px}
+.tx{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:13px 15px;margin:0 16px 9px;transition:.3s;animation:itemIn .45s var(--ease) both}
+.tx:hover{border-color:rgba(0,229,176,.3)}
+.tx b{font-size:13px;display:block}
+.tx span{font-size:11px;color:var(--mut)}
+.tx .amt{font-weight:900;font-size:14px}
+.plus{color:var(--accent)}.minus{color:var(--danger)}
+
+.profile-head{margin:16px;padding:26px 20px;border-radius:22px;text-align:center;background:var(--card);border:1px solid var(--line);
+  position:relative;overflow:hidden}
+.profile-head:before{content:"";position:absolute;top:0;left:-60%;width:60%;height:100%;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.05),transparent);animation:sheen 6s ease-in-out infinite}
+.avatar{width:76px;height:76px;margin:0 auto 12px;border-radius:24px;background:var(--grad-lux);display:grid;place-items:center;
+  font-size:34px;box-shadow:var(--glow);animation:floaty 4s ease-in-out infinite}
+.profile-head b{font-size:17px}
+.profile-head .sub{font-size:12px;color:var(--mut);margin-top:3px}
+.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 6px;text-align:center;transition:.3s}
+.stat:hover{border-color:rgba(0,229,176,.35);box-shadow:var(--glow);transform:translateY(-2px)}
+.stat b{display:block;font-size:17px;background:var(--grad-lux);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{font-size:10.5px;color:var(--mut)}
+.menu{margin:14px 16px}
+.mrow{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:15px;padding:15px 16px;
+  margin-bottom:9px;cursor:pointer;width:100%;text-align:right;color:var(--txt);transition:.25s}
+.mrow:hover{border-color:rgba(0,229,176,.4);box-shadow:var(--glow);transform:translateY(-2px)}
+.mrow:active{transform:scale(.98)}
+.mrow .mi{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.05);display:grid;place-items:center;font-size:19px;transition:.3s}
+.mrow:hover .mi{background:rgba(0,229,176,.12);box-shadow:0 0 14px rgba(0,229,176,.25)}
+.mrow .mt{flex:1}
+.mrow b{font-size:13.5px;display:block}
+.mrow span{font-size:11.5px;color:var(--mut)}
+.mrow .arrow{color:var(--mut);transition:.3s}
+.mrow:hover .arrow{color:var(--accent);transform:translateX(-4px)}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:200;opacity:0;pointer-events:none;transition:.35s}
+.overlay.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(400px,94vw);background:rgba(10,14,22,.97);z-index:201;
+  transform:translateX(-105%);transition:transform .45s var(--ease);display:flex;flex-direction:column;box-shadow:20px 0 60px rgba(0,0,0,.5)}
+.drawer.show{transform:none}
+.dhead{padding:18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.dbody{flex:1;overflow-y:auto;padding:14px}
+.dfoot{padding:16px;border-top:1px solid var(--line)}
+.total-row{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;margin-bottom:11px}
+.total-row b{background:var(--grad-lux);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:24px;font-weight:900}
+.citem{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;align-items:center}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:26px;height:26px;border-radius:8px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--txt);cursor:pointer;transition:.25s}
+.qty button:hover{border-color:rgba(0,229,176,.5);color:var(--accent)}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;
+  z-index:300;opacity:0;pointer-events:none;transition:.3s}
+.modal.show{opacity:1;pointer-events:auto}
+.sheet{background:rgba(16,23,36,.98);border:1px solid var(--line2);border-radius:24px 24px 0 0;width:100%;max-width:520px;
+  padding:22px 20px 30px;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform .45s var(--ease);
+  box-shadow:0 -20px 60px rgba(0,0,0,.6)}
+.modal.show .sheet{transform:none}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.sheet-x{background:rgba(255,255,255,.06);border:1px solid var(--line2);color:var(--txt);border-radius:10px;width:34px;height:34px;
+  font-size:15px;cursor:pointer;flex-shrink:0;transition:.25s}
+.sheet-x:hover{border-color:rgba(255,77,106,.5);color:var(--danger)}
+.handle{width:42px;height:4px;border-radius:99px;background:var(--line2);margin:0 auto 15px}
+.sheet h3{font-size:18px;font-weight:900;margin-bottom:4px}
+.step{display:flex;gap:12px;align-items:flex-start;margin:13px 0}
+.step .n{width:26px;height:26px;border-radius:99px;background:var(--grad);color:#04211f;font-weight:900;display:grid;place-items:center;font-size:12px;
+  box-shadow:0 0 14px rgba(0,229,176,.4)}
+.step p{font-size:13px;color:var(--mut);padding-top:3px;line-height:1.7}
+.addr{direction:ltr;text-align:center;font-size:14px;font-weight:800;word-break:break-all;background:rgba(0,229,176,.05);padding:14px;
+  border-radius:13px;margin:10px 0;cursor:pointer;border:1.5px dashed rgba(0,229,176,.3);transition:.3s}
+.addr:hover{background:rgba(0,229,176,.1);box-shadow:var(--glow)}
+.amt{text-align:center;font-size:32px;font-weight:900;margin:8px 0 14px;background:var(--grad-lux);-webkit-background-clip:text;
+  background-clip:text;color:transparent}
+
+/* ═══ مودال التنبيهات الاحترافي البديل لـ ALERT ═══ */
+.custom-modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.custom-modal-wrap.show{opacity:1;pointer-events:auto}
+.custom-modal-card{width:100%;max-width:380px;background:rgba(16,23,36,.98);border:1px solid var(--line2);border-radius:26px;padding:26px 20px 22px;text-align:center;box-shadow:0 25px 70px rgba(0,0,0,.8);transform:scale(.88) translateY(20px);transition:transform .35s var(--ease);position:relative;overflow:hidden}
+.custom-modal-wrap.show .custom-modal-card{transform:scale(1) translateY(0)}
+.custom-modal-icon{width:64px;height:64px;border-radius:20px;margin:0 auto 16px;display:grid;place-items:center;font-size:30px;box-shadow:0 10px 25px rgba(0,0,0,.3)}
+.custom-modal-icon.info{background:rgba(0,163,255,.12);border:1px solid rgba(0,163,255,.3);color:var(--accent2)}
+.custom-modal-icon.success{background:rgba(0,229,176,.12);border:1px solid rgba(0,229,176,.3);color:var(--accent)}
+.custom-modal-icon.error{background:rgba(255,77,106,.12);border:1px solid rgba(255,77,106,.3);color:var(--danger)}
+.custom-modal-icon.warn{background:rgba(255,200,72,.12);border:1px solid rgba(255,200,72,.3);color:var(--gold)}
+.custom-modal-title{font-size:18px;font-weight:900;margin-bottom:8px;color:var(--txt)}
+.custom-modal-text{font-size:13.5px;color:var(--mut);line-height:1.7;margin-bottom:22px;word-break:break-word}
+.custom-modal-btns{display:flex;gap:10px}
+.custom-modal-btns button{flex:1;padding:12px}
+
+#toasts{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;width:min(92vw,380px)}
+.toast{background:rgba(16,23,36,.95);border:1px solid var(--line2);border-inline-start:4px solid var(--accent);border-radius:13px;
+  padding:13px 16px;font-size:13px;font-weight:700;box-shadow:var(--shadow),0 0 20px rgba(0,229,176,.12);animation:tin .4s var(--ease)}
+.toast.err{border-inline-start-color:var(--danger);box-shadow:var(--shadow),0 0 20px rgba(255,77,106,.12)}
+.toast.gold{border-inline-start-color:var(--gold);box-shadow:var(--shadow),0 0 20px rgba(255,200,72,.12)}
+@keyframes tin{from{opacity:0;transform:translateY(-14px)}}
+
+.gallery-modal{z-index:400}
+.gal-main{width:100%;height:260px;border-radius:16px;overflow:hidden;display:grid;place-items:center;background:rgba(0,0,0,.35);font-size:60px}
+.gal-main img{width:100%;height:100%;object-fit:contain}
+.gal-thumbs{display:flex;gap:8px;overflow-x:auto;margin-top:10px;padding-bottom:4px}
+.gal-thumbs img{width:64px;height:64px;border-radius:10px;object-fit:cover;cursor:pointer;border:2px solid transparent;flex-shrink:0;transition:.25s}
+.gal-thumbs img:hover{transform:scale(1.06)}
+.gal-thumbs img.on{border-color:var(--accent);box-shadow:0 0 12px rgba(0,229,176,.4)}
+.gal-nav{display:flex;gap:10px;margin-top:12px}
+.gal-nav button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--txt);
+  font-weight:800;cursor:pointer;font-family:'Cairo',sans-serif;transition:.25s}
+.gal-nav button:hover{border-color:rgba(0,229,176,.5);box-shadow:var(--glow)}
+
+.switch-row{display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.25);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.switch-row .st{flex:1}
+.switch-row b{font-size:13px;display:block}
+.switch-row span{font-size:11px;color:var(--mut)}
+.switch{position:relative;width:46px;height:26px;flex-shrink:0;cursor:pointer}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:rgba(255,255,255,.12);border-radius:99px;transition:.3s}
+.slider:before{content:"";position:absolute;height:20px;width:20px;right:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
+.switch input:checked + .slider{background:var(--grad);box-shadow:0 0 14px rgba(0,229,176,.4)}
+.switch input:checked + .slider:before{transform:translateX(-20px)}
+
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.perm-item{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.25);border-radius:11px;padding:10px 12px;cursor:pointer;transition:.25s}
+.perm-item:hover{background:rgba(0,229,176,.06)}
+.perm-item input{width:17px;height:17px;accent-color:#00e5b0;cursor:pointer;flex-shrink:0}
+.perm-item span{font-size:12px;font-weight:700}
+
+/* ═══ لوحة الإدارة ═══ */
+.admin-wrap{display:none;position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;padding-bottom:40px}
+body.admin .admin-wrap{display:block}
+.awrap{max-width:560px;margin:0 auto;padding:0 16px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:14px 0;
+  transition:border-color .3s,box-shadow .3s;position:relative;overflow:hidden}
+.panel:before{content:"";position:absolute;top:0;inset-inline:0;height:2px;opacity:0;transition:.3s;
+  background:linear-gradient(90deg,transparent,rgba(0,229,176,.6),transparent)}
+.panel:hover{border-color:rgba(0,229,176,.25);box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.panel:hover:before{opacity:1}
+.panel h3{font-size:15.5px;font-weight:900;margin-bottom:14px}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:right;color:var(--mut);font-weight:700;padding:9px 5px;border-bottom:1px solid var(--line2)}
+.tbl td{padding:10px 5px;border-bottom:1px solid var(--line);word-break:break-word}
+.tbl tr.urow{cursor:pointer;transition:.2s}
+.tbl tr.urow:hover td{background:rgba(0,229,176,.04)}
+.badge{padding:4px 11px;border-radius:99px;font-size:10.5px;font-weight:900}
+.b-ok{background:rgba(0,229,176,.15);color:var(--accent)}
+.b-wait{background:rgba(255,200,72,.15);color:var(--gold)}
+.b-no{background:rgba(255,77,106,.15);color:var(--danger)}
+.b-owner{background:rgba(139,92,246,.15);color:#b79cff}
+.mini{border-radius:8px;padding:4px 12px;cursor:pointer;font-size:11px;font-weight:700;border:1px solid;transition:.25s}
+.mini:hover{box-shadow:0 0 12px rgba(0,229,176,.25)}
+.mini.ok{background:rgba(0,229,176,.1);border-color:rgba(0,229,176,.4);color:var(--accent)}
+.mini.no{background:rgba(255,77,106,.1);border-color:rgba(255,77,106,.4);color:var(--danger)}
+.mini.gold{background:rgba(255,200,72,.1);border-color:rgba(255,200,72,.4);color:var(--gold)}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.row-flex{display:flex;gap:10px}
+.row-flex>*{flex:1}
+.cmd-hint{font-size:11.5px;color:var(--mut);line-height:2;direction:ltr;text-align:left;background:rgba(0,0,0,.3);border-radius:12px;
+  padding:12px 14px;margin-top:10px}
+.cmd-hint b{color:var(--accent)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:14px 0}
+.stat-grid .stat b{font-size:20px}
+.info-grid{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font-size:13px;margin:12px 0}
+.info-grid .k{color:var(--mut);font-weight:700}
+.info-grid .v{word-break:break-all}
+.info-grid .v code{direction:ltr;display:inline-block;font-size:11px;color:var(--accent2)}
+input[type="datetime-local"]{direction:ltr;text-align:left}
+.role-tag{font-size:10px;font-weight:900;padding:3px 9px;border-radius:99px;margin-inline-start:6px}
+
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<div class="starfield"></div>
+<div class="aurora a1"></div><div class="aurora a2"></div>
+<div id="toasts"></div>
+
+<!-- ⚡ مودال الاحترافي للتنبيهات والتأكيدات البديل لـ alert و confirm -->
+<div class="custom-modal-wrap" id="customModal">
+  <div class="custom-modal-card">
+    <div class="custom-modal-icon info" id="cmIcon">🔔</div>
+    <h3 class="custom-modal-title" id="cmTitle">تنبيه</h3>
+    <p class="custom-modal-text" id="cmText"></p>
+    <div class="custom-modal-btns" id="cmBtns">
+      <button class="btn" id="cmOkBtn">حسناً</button>
+    </div>
+  </div>
+</div>
+
+<!-- ⚡ قالب شعار النيون (SVG) — خط يبدأ من نقطة وينتهي برسم الأيقونة -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="neonIcon" viewBox="0 0 64 64">
+      <circle class="nl-dot" cx="32" cy="32" r="2.4" fill="#00e5b0"/>
+      <path class="nl-line" d="M32 32 L32 8 L56 32 L32 56 L8 32 Z M32 32 L32 18 L44 32 L32 46 L20 32 Z"
+        fill="none" stroke="#00e5b0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle class="nl-core" cx="32" cy="32" r="4.5" fill="#00e5b0" opacity="0"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ═══════════ الدخول / التسجيل ═══════════ -->
+<div class="auth-wrap" id="authWrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="neon-logo loop"><svg width="46" height="46"><use href="#neonIcon"/></svg></div>
+      <h1>Level<span>Up</span></h1>
+      <p>شحن شدات ببجي موبايل بأسرع وقت</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tabLogin" onclick="authMode('login')">تسجيل الدخول</button>
+      <button class="auth-tab" id="tabReg" onclick="authMode('register')">حساب جديد</button>
+    </div>
+
+    <div id="loginForm">
+      <div class="fgroup"><label>رقم الجوال</label>
+        <div class="phone-row">
+          <select id="lgCC">
+            <option value="+963">🇸🇾 +963</option>
+            <option value="+966">🇸🇦 +966</option>
+            <option value="+971">🇦🇪 +971</option>
+            <option value="+965">🇰🇼 +965</option>
+            <option value="+973">🇧🇭 +973</option>
+            <option value="+974">🇶🇦 +974</option>
+            <option value="+968">🇴🇲 +968</option>
+            <option value="+20">🇪🇬 +20</option>
+            <option value="+964">🇮🇶 +964</option>
+            <option value="+962">🇯🇴 +962</option>
+            <option value="+212">🇲🇦 +212</option>
+          </select>
+          <input id="lgPhone" type="tel" placeholder="9xxxxxxxx" maxlength="12">
+        </div>
+      </div>
+      <div class="fgroup"><label>كلمة السر</label><input id="lgPass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn" id="lgBtn" onclick="doLogin()">دخول إلى المتجر ←</button>
+      <p id="lgMsg" class="msg"></p>
+    </div>
+
+    <div id="regForm" style="display:none">
+      <div class="fgroup"><label>اسمك الكامل</label><input id="rgName" placeholder="مثال: أحمد محمد"></div>
+      <div class="fgroup"><label>رقم الجوال</label>
+        <div class="phone-row">
+          <select id="rgCC">
+            <option value="+963">🇸🇾 +963</option>
+            <option value="+966">🇸🇦 +966</option>
+            <option value="+971">🇦🇪 +971</option>
+            <option value="+965">🇰🇼 +965</option>
+            <option value="+973">🇧🇭 +973</option>
+            <option value="+974">🇶🇦 +974</option>
+            <option value="+968">🇴🇲 +968</option>
+            <option value="+20">🇪🇬 +20</option>
+            <option value="+964">🇮🇶 +964</option>
+            <option value="+962">🇯🇴 +962</option>
+            <option value="+212">🇲🇦 +212</option>
+          </select>
+          <input id="rgPhone" type="tel" placeholder="9xxxxxxxx" maxlength="12">
+        </div>
+      </div>
+      <div class="fgroup"><label>كلمة السر (6 خانات على الأقل)</label><input id="rgPass" type="password" placeholder="••••••••"></div>
+      <div class="fgroup"><label>تأكيد كلمة السر</label><input id="rgPass2" type="password" placeholder="••••••••"></div>
+      <button class="btn" id="rgBtn" onclick="doRegister()">إنشاء الحساب ✨</button>
+      <p id="rgMsg" class="msg"></p>
+    </div>
+
+    <p class="cloud-status" id="cloudStatus"></p>
+  </div>
+</div>
+
+<!-- ═══════════ التطبيق ═══════════ -->
+<div class="app">
+  <header><div class="hwrap">
+    <div class="logo"><div class="neon-logo"><svg width="28" height="28"><use href="#neonIcon"/></svg></div>Up&nbsp;<span class="lg-span">Level</span></div>
+    <div class="hdr-actions">
+      <div class="admin-btn" id="hdrAdminBtn" onclick="openAdmin()" title="لوحة الإدارة">⚙️</div>
+      <div class="mail-btn" id="mailBtn" onclick="openMailbox()" title="صندوق البريد">📬
+        <span class="mail-badge" id="mailBadge" style="display:none">0</span>
+      </div>
+      <div class="balance-pill" id="hdrBalancePill" onclick="goTo('balance')">الرصيد: <b id="hdrBalance">0.00</b> USDT</div>
+    </div>
+  </div></header>
+
+  <section id="page-products" class="page active">
+    <div class="hero"><h1>أهلًا <span class="lux" id="heroName">بك</span> 👋</h1>
+      <p>شحن شدات ببجي موبايل · دفع مباشر من رصيدك · تسليم فوري بعد المراجعة</p></div>
+    <div class="toolbar">
+      <div class="search-box">🔎<input id="searchBox" placeholder="ابحث عن باقة الشحن..." oninput="renderProducts()"></div>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="sec-head"><h2>باقات الشدات (UC)</h2></div>
+    <div id="products" class="grid"></div>
+  </section>
+
+  <section id="page-deals" class="page">
+    <div class="offer-banner" id="offerBanner" style="display:none">
+      <div style="font-size:14px;color:var(--gold);font-weight:800" id="obKicker">⚡ عروض الأسبوع</div>
+      <div class="big" id="obBig">خصومات حتى 40%</div>
+      <p id="obEndsLabel">ينتهي العرض بعد:</p>
+    </div>
+    <div id="activePromos"></div>
+    <div class="timer-strip" id="timerStrip" style="display:none">
+      <div class="tbox"><b id="tH">00</b><span>ساعة</span></div>
+      <div class="tbox"><b id="tM">00</b><span>دقيقة</span></div>
+      <div class="tbox"><b id="tS">00</b><span>ثانية</span></div>
+    </div>
+    <div class="timer-ended" id="timerEnded">⌛ انتهى وقت العرض — ترقبوا العروض الجديدة!</div>
+    <div class="sec-head" style="margin-top:0"><h2>أقوى الصفقات</h2></div>
+    <div id="dealsList"></div>
+  </section>
+
+  <section id="page-balance" class="page">
+    <div class="balance-card"><div class="lbl">رصيد حسابي</div>
+      <div class="val" id="balMain">0.00</div>
+      <div style="font-size:11px;color:var(--mut);margin-top:8px">يُستخدم لشراء الشدات مباشرة داخل المتجر</div></div>
+    <div class="balance-actions">
+      <button class="btn" onclick="topUpFlow()">➕ شحن الرصيد</button>
+      <button class="btn gray" onclick="withdrawFlow()">💸 طلب استرجاع</button>
+    </div>
+    <div class="sec-head"><h2>آخر العمليات</h2></div>
+    <div id="txList"></div>
+  </section>
+
+  <section id="page-account" class="page">
+    <div class="profile-head">
+      <div class="avatar">🎮</div>
+      <b id="accName">—</b>
+      <div class="sub" id="accPhone2">—</div>
+    </div>
+    <div class="stats3">
+      <div class="stat"><span>الطلبات</span><b id="accOrders">0</b></div>
+      <div class="stat"><span>المصروف</span><b id="accSpent">0</b></div>
+      <div class="stat"><span>الرصيد</span><b id="accBal">0</b></div>
+    </div>
+    <div class="menu">
+      <button class="mrow" onclick="openMailbox()"><div class="mi">📬</div>
+        <div class="mt"><b>صندوق البريد</b><span>إشعارات القبول والرفض من الإدارة</span></div><div class="arrow">←</div></button>
+      <button class="mrow" onclick="showOrdersSheet()"><div class="mi">🧾</div>
+        <div class="mt"><b>سجل الطلبات</b><span>تتبع طلبات شحنك وحالات المراجعة</span></div><div class="arrow">←</div></button>
+      <button class="mrow" onclick="contactSupport()"><div class="mi">💬</div>
+        <div class="mt"><b>الدعم الفني</b><span>تواصل مباشر عبر تيليجرام</span></div><div class="arrow">←</div></button>
+      <button class="mrow" onclick="logout()"><div class="mi">🚪</div>
+        <div class="mt"><b>تسجيل الخروج</b><span>إغلاق جلستك</span></div><div class="arrow">←</div></button>
+    </div>
+  </section>
+</div>
+
+<nav><div class="nav-inner">
+  <button class="tab active" data-page="products" onclick="goTo('products',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg>الباقات</button>
+  <button class="tab" data-page="deals" onclick="goTo('deals',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 11 3H4v7l9.6 10.4a2 2 0 0 0 2.8 0l4.2-4.2a2 2 0 0 0 0-2.8z"/><circle cx="7.5" cy="6.5" r="1.2"/></svg>العروض</button>
+  <button class="tab" data-page="balance" onclick="goTo('balance',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="13" rx="2.5"/><path d="M2 10.5h20M6 15h4"/></svg>الرصيد</button>
+  <button class="tab" data-page="account" onclick="goTo('account',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>حسابي</button>
+</div></nav>
+
+<!-- السلة -->
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+<div class="drawer" id="cartDrawer">
+  <div class="dhead"><h3>🛒 سلة الشحن</h3>
+    <button onclick="closeAll()" style="background:none;border:none;color:var(--mut);font-size:18px;cursor:pointer">✕</button></div>
+  <div class="dbody" id="cartBody"></div>
+  <div class="dfoot">
+    <div class="total-row"><span>رصيدك الحالي</span><b id="cartMyBal" style="font-size:15px">0.00</b></div>
+    <div class="total-row"><span>الإجمالي</span><b id="cartTotal">0.00 USDT</b></div>
+    <button class="btn" onclick="checkoutCart()">💳 الدفع من الرصيد</button>
+  </div>
+</div>
+
+<!-- الدفع -->
+<div class="modal" id="payModal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-head"><h3>💳 تأكيد الدفع من الرصيد</h3><button class="sheet-x" onclick="closeAll()">✕</button></div>
+  <p style="font-size:12.5px;color:var(--mut);margin-bottom:12px">سيتم خصم المبلغ مباشرة من رصيد حسابك</p>
+  <div class="step"><div class="n">1</div><p>باقات الشحن المطلوبة</p></div>
+  <div id="payItems" style="font-size:13px;background:rgba(0,0,0,.25);border-radius:12px;padding:12px 14px;line-height:2"></div>
+  <div class="step"><div class="n">2</div><p>المبلغ المطلوب خصمه من رصيدك</p></div>
+  <div class="amt"><span id="payAmount"></span> <span style="font-size:15px">USDT</span></div>
+  <div style="text-align:center;font-size:13px;margin-bottom:14px">رصيدك بعد الشراء: <b id="payAfter" style="color:var(--accent)"></b> USDT</div>
+  <div class="fgroup"><label>معرف اللاعب (Player ID) — اختياري</label><input id="custNote" placeholder="مثال: 5123456789" style="direction:ltr;text-align:left"></div>
+  <button class="btn" id="verifyBtn" onclick="submitOrder()">✅ تأكيد الشراء والخصم</button>
+  <button class="btn gray" onclick="closeAll()">إلغاء</button>
+  <p id="payMsg" class="msg"></p>
+</div></div>
+
+<!-- شحن الرصيد -->
+<div class="modal" id="topUpModal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-head"><h3>➕ شحن الرصيد</h3><button class="sheet-x" onclick="closeAll()">✕</button></div>
+  <p style="font-size:12.5px;color:var(--mut);margin-bottom:12px">حوّل المبلغ إلى محفظة المتجر ثم أرسل TXID — يُضاف الرصيد بعد موافقة المدير</p>
+  <div class="fgroup"><label>مبلغ الشحن (USDT)</label><input id="tuAmount" type="number" min="1" placeholder="50"></div>
+  <div class="addr" id="tuWallet" onclick="copyAddr()"></div>
+  <div class="fgroup"><label>TXID المعاملة</label><input id="tuTxid" placeholder="TXID من محفظتك" style="direction:ltr;text-align:left"></div>
+  <button class="btn" onclick="submitTopUp()">📤 إرسال طلب الشحن</button>
+  <button class="btn gray" onclick="closeAll()">إلغاء</button>
+  <p id="tuMsg" class="msg"></p>
+</div></div>
+
+<!-- طلب استرجاع -->
+<div class="modal" id="withdrawModal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-head"><h3>💸 طلب استرجاع رصيد</h3><button class="sheet-x" onclick="closeAll()">✕</button></div>
+  <p style="font-size:12.5px;color:var(--mut);margin-bottom:12px">أدخل المبلغ وعنوان محفظتك (TRC20) — يُخصم المبلغ من رصيدك بعد موافقة المدير</p>
+  <div style="text-align:center;font-size:13px;margin-bottom:12px">رصيدك المتاح: <b id="wdAvail" style="color:var(--accent)">0.00</b> USDT</div>
+  <div class="fgroup"><label>المبلغ المطلوب استرجاعه (USDT)</label><input id="wdAmount" type="number" min="1" step="0.01" placeholder="50"></div>
+  <div class="fgroup"><label>عنوان المحفظة (TRC20)</label><input id="wdWallet" placeholder="Txxxxxxxxxxxxxxxxxxxxx" style="direction:ltr;text-align:left"></div>
+  <button class="btn" onclick="submitWithdraw()">📤 إرسال طلب الاسترجاع</button>
+  <button class="btn gray" onclick="closeAll()">إلغاء</button>
+  <p id="wdMsg" class="msg"></p>
+</div></div>
+
+<!-- سجل الطلبات -->
+<div class="modal" id="ordersModal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-head"><h3>🧾 سجل الطلبات</h3><button class="sheet-x" onclick="closeAll()">✕</button></div>
+  <div id="ordersSheetList" style="margin-top:12px"></div>
+  <button class="btn gray" style="margin-top:12px" onclick="closeAll()">إغلاق</button>
+</div></div>
+
+<!-- صندوق البريد -->
+<div class="modal" id="notifModal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-head"><h3>📬 صندوق البريد</h3><button class="sheet-x" onclick="closeAll()">✕</button></div>
+  <p style="font-size:12px;color:var(--mut);margin-bottom:10px">إشعارات القبول والرفض وتعديلات الرصيد تصل هنا</p>
+  <div id="notifList" style="margin-top:12px"></div>
+  <button class="btn gray" style="margin-top:12px" onclick="closeAll();markAllRead()">✓ تحديد الكل كمقروء</button>
+</div></div>
+
+<!-- معرض صور المنتج -->
+<div class="modal gallery-modal" id="galleryModal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-head"><h3 id="galName">🖼️ صور الباقة</h3><button class="sheet-x" onclick="closeAll()">✕</button></div>
+  <div class="gal-main" id="galMain"></div>
+  <div class="gal-thumbs" id="galThumbs"></div>
+  <div class="gal-nav">
+    <button onclick="galStep(-1)">← السابقة</button>
+    <button onclick="buyNow(galProductId);closeAll()">⚡ شراء مباشر</button>
+    <button onclick="galStep(1)">التالية →</button>
+  </div>
+</div></div>
+
+<!-- ═══════════ لوحة الإدارة ═══════════ -->
+<div class="admin-wrap">
+  <header><div class="hwrap">
+    <div class="logo"><div class="neon-logo"><svg width="28" height="28"><use href="#neonIcon"/></svg></div>مركز التحكم <span id="adminRoleTag" class="role-tag b-owner"></span></div>
+    <button onclick="closeAdmin()" style="background:var(--card);border:1px solid var(--line2);color:var(--txt);border-radius:12px;padding:9px 15px;cursor:pointer;font-size:12px;font-weight:700">✕ إغلاق</button>
+  </div></header>
+  <div class="awrap">
+    <div id="adminBody">
+      <div class="stat-grid" id="adminStats"></div>
+
+      <div class="panel" id="pnAdmins"><h3>👑 إدارة المدراء (المالك فقط)</h3>
+        <p style="font-size:11.5px;color:var(--mut);margin-bottom:10px">اختر مستخدمًا مسجلًا (أو أدخل رقمًا يدويًا) + كلمة سر الإدارة الخاصة به. يدخل المدير من نموذج تسجيل الدخول العادي برقمه وكلمة سر الإدارة.</p>
+        <div class="fgroup"><label>اختر مستخدمًا مسجلًا (اختياري)</label>
+          <select id="amUser" onchange="document.getElementById('amPhone').value=this.value;document.getElementById('amName').value=this.options[this.selectedIndex].dataset.name||''">
+            <option value="">— إدخال يدوي —</option>
+          </select></div>
+        <div class="form-2col">
+          <div class="fgroup"><label>اسم المدير</label><input id="amName" placeholder="أحمد"></div>
+          <div class="fgroup"><label>رقم الهاتف (يستخدمه للدخول)</label><input id="amPhone" placeholder="+9665xxxxxxx" style="direction:ltr;text-align:left"></div>
+        </div>
+        <div class="fgroup"><label>كلمة سر الإدارة الخاصة به (6 خانات على الأقل)</label><input id="amPass" type="password" placeholder="••••••••"></div>
+        <label style="font-size:12.5px;color:var(--mut);font-weight:700;display:block;margin:4px 0 2px">الصلاحيات</label>
+        <div class="perm-grid" id="amPerms"></div>
+        <button class="btn gold" onclick="addAdminAccount()">👑 إضافة المدير</button>
+        <p id="amMsg" class="msg"></p>
+        <div id="adminsList" style="margin-top:12px"></div>
+      </div>
+
+      <div class="panel" id="pnBanner"><h3>🖼️ البانر والمؤقت (قسم العروض)</h3>
+        <div class="switch-row">
+          <div class="st"><b>إظهار البانر</b><span>شريط "عروض الأسبوع" أعلى صفحة العروض</span></div>
+          <label class="switch"><input type="checkbox" id="bnShow"><span class="slider"></span></label>
+        </div>
+        <div class="fgroup"><label>العنوان الصغير (Kicker)</label><input id="bnKicker" placeholder="⚡ عروض الأسبوع"></div>
+        <div class="fgroup"><label>النص الكبير</label><input id="bnBig" placeholder="خصومات حتى 40%"></div>
+        <div class="fgroup"><label>عبارة "ينتهي العرض بعد"</label><input id="bnEndsLabel" placeholder="ينتهي العرض بعد:"></div>
+        <div class="switch-row">
+          <div class="st"><b>تفعيل المؤقت</b><span>العدّاد أسفل البانر</span></div>
+          <label class="switch"><input type="checkbox" id="bnTimer"><span class="slider"></span></label>
+        </div>
+        <div class="form-2col">
+          <div class="fgroup"><label>وضع المؤقت</label>
+            <select id="bnTimerMode" onchange="document.getElementById('bnTimerEndWrap').style.display=this.value==='custom'?'block':'none'">
+              <option value="daily">يومي — ينتهي منتصف الليل</option>
+              <option value="custom">تاريخ مخصص</option>
+            </select></div>
+          <div class="fgroup" id="bnTimerEndWrap" style="display:none"><label>تاريخ ووقت الانتهاء</label>
+            <input id="bnTimerEnd" type="datetime-local"></div>
+        </div>
+        <div class="switch-row">
+          <div class="st"><b>رسالة "انتهى وقت العرض"</b><span>تظهر بعد انتهاء المؤقت المخصص</span></div>
+          <label class="switch"><input type="checkbox" id="bnEndedMsg"><span class="slider"></span></label>
+        </div>
+        <button class="btn gold" onclick="saveBanner()">💾 حفظ البانر والمؤقت</button>
+        <p id="bnMsg" class="msg"></p>
+      </div>
+
+      <div class="panel" id="pnOrders"><h3>📨 طلبات الشراء بانتظار المراجعة</h3><table class="tbl" id="pendingTable"></table></div>
+      <div class="panel" id="pnTopups"><h3>💰 طلبات شحن الرصيد</h3>
+        <div id="topupList"></div></div>
+      <div class="panel" id="pnWithdraws"><h3>💸 طلبات الاسترجاع</h3>
+        <p style="font-size:11.5px;color:var(--mut);margin-bottom:10px">عند القبول يُخصم المبلغ من رصيد المستخدم ويُحوّل لعنوان محفظته</p>
+        <div id="withdrawList"></div></div>
+      <div class="panel" id="pnUsers"><h3>👥 المستخدمون</h3>
+        <p style="font-size:11.5px;color:var(--mut);margin-bottom:10px">اضغط على المستخدم لإضافة أو خصم رصيد من حسابه</p>
+        <table class="tbl" id="usersTable"></table></div>
+      <div class="panel" id="pnPromos"><h3>🏷️ العروض والخصومات</h3>
+        <div class="form-2col">
+          <div class="fgroup"><label>عنوان العرض</label><input id="prTitle" placeholder="خصم رمضان"></div>
+          <div class="fgroup"><label>نسبة الخصم %</label><input id="prPercent" type="number" min="1" max="90" placeholder="20"></div>
+        </div>
+        <div class="form-2col">
+          <div class="fgroup"><label>يشمل</label>
+            <select id="prScope" onchange="document.getElementById('prProductWrap').style.display=this.value==='product'?'block':'none'">
+              <option value="all">كل الباقات</option><option value="product">باقة محددة</option></select></div>
+          <div class="fgroup" id="prProductWrap" style="display:none"><label>الباقة</label>
+            <select id="prProduct"></select></div>
+        </div>
+        <button class="btn gold" onclick="addPromo()">🎁 إضافة العرض</button>
+        <p id="prMsg" class="msg"></p>
+        <div id="promoTable" style="margin-top:8px"></div>
+      </div>
+      <div class="panel" id="pnProducts"><h3>➕ إضافة باقة شدات جديدة</h3>
+        <div class="fgroup"><label>اسم الباقة</label><input id="npName" placeholder="مثال: 660 شدة + 60 bonus"></div>
+        <div class="form-2col">
+          <div class="fgroup"><label>السعر (USDT)</label><input id="npPrice" type="number" min="1" placeholder="10"></div>
+          <div class="fgroup"><label>السعر قبل الخصم</label><input id="npOld" type="number" min="0" placeholder="14"></div>
+        </div>
+        <div class="form-2col">
+          <div class="fgroup"><label>التصنيف</label><input id="npCat" placeholder="شدات UC"></div>
+          <div class="fgroup"><label>إيموجي بديل</label><input id="npImg" placeholder="💰"></div>
+        </div>
+        <div class="fgroup"><label>روابط الصور (رابط في كل سطر)</label>
+          <textarea id="npPhoto" rows="3" style="direction:ltr;text-align:left" placeholder="https://example.com/uc1.jpg&#10;https://example.com/uc2.jpg"></textarea></div>
+        <div class="fgroup"><label>الوصف</label><input id="npDesc" placeholder="تسليم مباشر بالـ ID · خلال 5 دقائق"></div>
+        <button class="btn" onclick="addProduct()">حفظ الباقة</button>
+      </div>
+      <div class="panel" id="pnConfig"><h3>🤖 التحكم عبر بوت تيليجرام</h3>
+        <div class="fgroup"><label>توكن البوت</label><input id="cfgToken" placeholder="123456:ABC-xxx" style="direction:ltr;text-align:left"></div>
+        <div class="fgroup"><label>Chat ID للمدير</label><input id="cfgChat" placeholder="123456789" style="direction:ltr;text-align:left"></div>
+        <div class="fgroup"><label>محفظة المتجر (TRC20)</label><input id="cfgWallet" placeholder="Txxx..." style="direction:ltr;text-align:left"></div>
+        <div class="fgroup"><label>رابط دعم تيليجرام</label><input id="cfgSupport" placeholder="https://t.me/..." style="direction:ltr;text-align:left"></div>
+        <div class="row-flex">
+          <button class="btn" onclick="saveCfg()">💾 حفظ</button>
+          <button class="btn gray" onclick="testTG()">🔔 اختبار</button>
+        </div>
+        <p id="cfgMsg" class="msg"></p>
+        <button class="btn" id="pollBtn" onclick="togglePolling()" style="margin-top:10px">🤖 تشغيل الاستماع لأوامر تيليجرام</button>
+        <p id="pollMsg" class="msg"></p>
+        <div class="cmd-hint">
+          <b>/addproduct</b> اسم|السعر|قبل الخصم|إيموجي<br>
+          <b>/delproduct</b> رقم الباقة<br>
+          <b>/approve</b> رقم الطلب<br>
+          <b>/reject</b> رقم الطلب<br>
+          <b>/addbalance</b> رقم_الهاتف المبلغ<br>
+          <b>/setwallet</b> عنوان_المحفظة<br>
+          <b>/orders</b> — الطلبات المعلّقة<br>
+          <b>/products</b> — الباقات<br>
+          <b>/stats</b> — الإحصائيات
+        </div>
+      </div>
+      <div class="panel" id="pnProductsList"><h3>📦 الباقات</h3><table class="tbl" id="prodTable"></table></div>
+      <div class="panel" id="pnOrdersList"><h3>🧾 كل الطلبات</h3><table class="tbl" id="ordersTable"></table></div>
+      <div class="panel" id="pnDanger"><h3>🗑️ منطقة الخطر (المالك فقط)</h3>
+        <button class="btn red" onclick="wipeAll()">حذف كل البيانات</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- نافذة المستخدم (إدارة الرصيد) -->
+<div class="modal" id="userModal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-head"><h3>👤 إدارة المستخدم</h3><button class="sheet-x" onclick="closeAll()">✕</button></div>
+  <div class="info-grid" id="umInfo"></div>
+  <div class="fgroup"><label>المبلغ (USDT)</label><input id="umAmount" type="number" min="0.01" step="0.01" placeholder="50"></div>
+  <div class="fgroup"><label>ملاحظة (تظهر للمستخدم)</label><input id="umNote" placeholder="مكافأة · تعديل يدوي..."></div>
+  <div class="row-flex">
+    <button class="btn" onclick="adminAdjust(1)">➕ إضافة للرصيد</button>
+    <button class="btn red" onclick="adminAdjust(-1)">➖ خصم من الرصيد</button>
+  </div>
+  <button class="btn gray" style="margin-top:10px" onclick="closeAll()">إغلاق</button>
+  <p id="umMsg" class="msg"></p>
+</div></div>
+
+<script>
+"use strict";
+
+/* ═══════════ محرك المودال الاحترافي التفاعلي البديل لـ ALERT و CONFIRM ═══════════ */
+function showCustomModal(options) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("customModal");
+    const iconEl = document.getElementById("cmIcon");
+    const titleEl = document.getElementById("cmTitle");
+    const textEl = document.getElementById("cmText");
+    const btnsEl = document.getElementById("cmBtns");
+
+    const type = options.type || "info"; // info, success, error, warn
+    const icons = { info: "🔔", success: "✅", error: "❌", warn: "⚠️" };
+    
+    iconEl.className = "custom-modal-icon " + type;
+    iconEl.textContent = options.icon || icons[type] || "🔔";
+    titleEl.textContent = options.title || "تنبيه";
+    textEl.textContent = options.text || "";
+
+    btnsEl.innerHTML = "";
+
+    if (options.confirm) {
+      // وضع التأكيد (Confirm)
+      const cancelBtn = document.createElement("button");
+      cancelBtn.className = "btn gray";
+      cancelBtn.textContent = options.cancelText || "إلغاء";
+      cancelBtn.onclick = () => {
+        modal.classList.remove("show");
+        resolve(false);
+      };
+
+      const confirmBtn = document.createElement("button");
+      confirmBtn.className = "btn " + (type === "error" ? "red" : type === "warn" ? "gold" : "");
+      confirmBtn.textContent = options.okText || "موافقة";
+      confirmBtn.onclick = () => {
+        modal.classList.remove("show");
+        resolve(true);
+      };
+
+      btnsEl.appendChild(cancelBtn);
+      btnsEl.appendChild(confirmBtn);
+    } else {
+      // وضع التنبيه العادي (Alert)
+      const okBtn = document.createElement("button");
+      okBtn.className = "btn";
+      okBtn.textContent = options.okText || "حسناً";
+      okBtn.onclick = () => {
+        modal.classList.remove("show");
+        resolve(true);
+      };
+      btnsEl.appendChild(okBtn);
+    }
+
+    modal.classList.add("show");
+  });
+}
+
+// استبدال دالة Alert العالمية بمودال احترافي
+window.showAlert = function(msg, title = "تنبيه", type = "info") {
+  return showCustomModal({ title, text: msg, type });
+};
+
+// استبدال دالة Confirm العالمية بمودال احترافي
+window.showConfirm = function(msg, title = "تأكيد الإجراء", type = "warn") {
+  return showCustomModal({ title, text: msg, type, confirm: true });
+};
+
+/* ═══════════ إعدادات JSONBin السحابية ═══════════ */
+const JSONBIN_BIN_ID  = "6aadaf66ffd5d16053177808";
+const JSONBIN_API_KEY = "$2a$10$ivwSTRMoM3LWu6xcGn1TuOwDAt1Od36P/ifB92r0AgPfmP6ZeuEyy";
+const JSONBIN_URL     = "https://api.jsonbin.io/v3/b/" + JSONBIN_BIN_ID;
+
+/* ═══════════ ⚡ بيانات المالك السرية — غيّرها هنا ⚡ ═══════════ */
+const ADMIN_PHONE = "+963900000000";      /* ← رقم المشرف السري */
+const ADMIN_PASS  = "nova-admin-2026";    /* ← كلمة سر المشرف السرية */
+
+const DEFAULT_BANNER = {
+  show: true, timer: true,
+  kicker: "⚡ عروض الأسبوع",
+  big: "خصومات حتى 40%",
+  endsLabel: "ينتهي العرض بعد:",
+  timerMode: "daily",
+  timerEnd: "",
+  endedMsg: true
+};
+const DEFAULT_PRODUCTS = [
+  {id:1, name:"60 شدة (UC)",        price:1.2,  old:1.5,  img:"🪙", cat:"شدات UC",   desc:"شحن مباشر بالـ ID · تسليم فوري", photos:[]},
+  {id:2, name:"325 شدة + 25 bonus", price:5.5,  old:6.5,  img:"💰", cat:"شدات UC",   desc:"الأكثر مبيعًا · تسليم خلال دقائق", photos:[]},
+  {id:3, name:"660 شدة + 60 bonus", price:10.5, old:13,   img:"💎", cat:"شدات UC",   desc:"أفضل قيمة مقابل السعر", photos:[]},
+  {id:4, name:"1800 شدة + 300 bonus", price:26,  old:32,   img:"👑", cat:"شدات UC",   desc:"باقة الملوك · تسليم مباشر", photos:[]},
+  {id:5, name:"3850 شدة + 850 bonus", price:52,  old:65,   img:"🏆", cat:"شدات UC",   desc:"للاعبين المحترفين", photos:[]},
+  {id:6, name:"8100 شدة + 2000 bonus", price:105, old:130, img:"🔥", cat:"شدات UC",   desc:"أكبر باقة · أقوى توفير", photos:[]},
+  {id:7, name:"تمرير أسبوعي (RP)",   price:2.5,  old:3.5,  img:"🎫", cat:"تمرييرات",  desc:"Royal Pass أسبوعي كامل", photos:[]},
+  {id:8, name:"تمرير شهري (RP+)",    price:9.5,  old:12,   img:"🎖️", cat:"تمرييرات",  desc:"تمرير شهري + مكافآت حصرية", photos:[]},
+];
+
+const PERMS = [
+  {key:"orders",   label:"📋 الطلبات والموافقات"},
+  {key:"topups",   label:"💰 شحن/استرجاع"},
+  {key:"users",    label:"👥 المستخدمون"},
+  {key:"products", label:"📦 إدارة الباقات"},
+  {key:"promos",   label:"🏷️ العروض"},
+  {key:"banner",   label:"🖼️ البانر"},
+  {key:"config",   label:"🤖 إعدادات البوت"}
+];
+
+/* ═══════════ مخزن البيانات ═══════════ */
+let db = {
+  products: DEFAULT_PRODUCTS,
+  users: [],
+  orders: [],
+  promos: [],
+  banner: DEFAULT_BANNER,
+  cfg: {},
+  balances: {},
+  txs: {},
+  notifs: {},
+  reqSeq: 0,
+  admins: []
+};
+
+let writeQueue = Promise.resolve();
+let saveTimer = null;
+
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(syncToCloud, 400);
+}
+
+async function syncToCloud(){
+  if(!JSONBIN_BIN_ID || JSONBIN_BIN_ID.includes("ضع_هنا")) return;
+  writeQueue = writeQueue.then(async function(){
+    try{
+      const res = await fetch(JSONBIN_URL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Master-Key": JSONBIN_API_KEY
+        },
+        body: JSON.stringify(db)
+      });
+      if(res.ok){
+        setCloudStatus(true);
+      } else {
+        setCloudStatus(false, "فشل الحفظ السحابي (كود " + res.status + ")");
+        console.error("JSONBin save failed:", res.status);
+        toast("⚠️ فشل الحفظ السحابي! كود الخطأ: " + res.status, "err");
+      }
+    }catch(e){
+      setCloudStatus(false, "لا يوجد اتصال بالتخزين السحابي");
+      console.error("Cloud save error:", e);
+    }
+  });
+  return writeQueue;
+}
+
+async function syncFromCloud(){
+  if(!JSONBIN_BIN_ID || JSONBIN_BIN_ID.includes("ضع_هنا")) return;
+  try{
+    const res = await fetch(JSONBIN_URL + "/latest", {
+      headers: { "X-Master-Key": JSONBIN_API_KEY }
+    });
+    if(res.ok){
+      const data = await res.json();
+      if(data.record){
+        db = normalizeDb(Object.assign({}, db, data.record));
+        refreshAll();
+        setCloudStatus(true);
+      }
+    } else {
+      setCloudStatus(false, "فشل جلب البيانات من السحابة (كود " + res.status + ")");
+      console.error("JSONBin fetch failed:", res.status);
+    }
+  }catch(e){
+    setCloudStatus(false, "تعذر الاتصال بالسحابة — ستحفظ البيانات محليًا مؤقتًا");
+    console.error("Cloud fetch error:", e);
+  }
+}
+
+function normalizeDb(d){
+  d.products = (d.products && d.products.length) ? d.products : DEFAULT_PRODUCTS;
+  d.users    = d.users    || [];
+  d.orders   = d.orders   || [];
+  d.promos   = d.promos   || [];
+  d.banner   = Object.assign({}, DEFAULT_BANNER, d.banner || {});
+  d.cfg      = d.cfg      || {};
+  d.balances = d.balances || {};
+  d.txs      = d.txs      || {};
+  d.notifs   = d.notifs   || {};
+  d.reqSeq   = d.reqSeq   || 0;
+  d.admins   = d.admins   || [];
+  return d;
+}
+
+function setCloudStatus(ok, errMsg){
+  const el = document.getElementById("cloudStatus");
+  if(!el) return;
+  if(ok){ el.className = "cloud-status cloud-ok"; el.textContent = "☁️ متصل بالسحابة — البيانات محفوظة"; }
+  else  { el.className = "cloud-status cloud-bad"; el.textContent = "⚠️ " + (errMsg || "مشكلة في الاتصال"); }
+}
+
+const store = {
+  get cfg(){ return db.cfg || {}; },
+  set cfg(v){ db.cfg = v; scheduleSave(); },
+  get products(){ return db.products || DEFAULT_PRODUCTS; },
+  set products(v){ db.products = v; scheduleSave(); },
+  get users(){ return db.users || []; },
+  set users(v){ db.users = v; scheduleSave(); },
+  get session(){ try{ return JSON.parse(localStorage.getItem("nova_session")); }catch(e){ return null; } },
+  set session(v){ localStorage.setItem("nova_session", JSON.stringify(v)); },
+  get orders(){ return db.orders || []; },
+  set orders(v){ db.orders = v; scheduleSave(); },
+  get cart(){ try{ return JSON.parse(localStorage.getItem("nova_cart")) || []; }catch(e){ return []; } },
+  set cart(v){ localStorage.setItem("nova_cart", JSON.stringify(v)); },
+  get promos(){ return db.promos || []; },
+  set promos(v){ db.promos = v; scheduleSave(); }
+};
+
+function getBanner(){ return Object.assign({}, DEFAULT_BANNER, db.banner || {}); }
+function setBanner(v){ db.banner = v; scheduleSave(); }
+
+function getBalance(phone){
+  const p = phone || (store.session ? store.session.phone : "");
+  if(!p) return 0;
+  return parseFloat(db.balances[p] || 0);
+}
+function setBalance(v, phone){
+  const p = phone || (store.session ? store.session.phone : "");
+  if(!p) return;
+  db.balances[p] = String(v);
+  scheduleSave();
+}
+function getTx(phone){
+  const p = phone || (store.session ? store.session.phone : "");
+  if(!p) return [];
+  return db.txs[p] || [];
+}
+function setTx(v, phone){
+  const p = phone || (store.session ? store.session.phone : "");
+  if(!p) return;
+  db.txs[p] = v.slice(0, 50);
+  scheduleSave();
+}
+function getNotifs(phone){ return db.notifs[phone] || []; }
+function pushNotif(phone, text, type){
+  if(!phone) return;
+  const n = getNotifs(phone);
+  n.unshift({ text: text, type: type || "ok", time: Date.now() });
+  db.notifs[phone] = n.slice(0, 50);
+  scheduleSave();
+  updateMailBadge();
+}
+function getMailRead(phone){ try{ return JSON.parse(localStorage.getItem("nova_mailread_" + phone)) || 0; }catch(e){ return 0; } }
+function markAllRead(){
+  if(!store.session || !store.session.phone) return;
+  localStorage.setItem("nova_mailread_" + store.session.phone, JSON.stringify(Date.now() + 60000));
+  updateMailBadge();
+}
+
+/* ═══════════ الأدوار والصلاحيات ═══════════ */
+function isOwner(){ return !!(store.session && store.session.role === "owner"); }
+function isAdmin(){ return !!(store.session && store.session.admin); }
+function can(perm){
+  if(!isAdmin()) return false;
+  if(isOwner()) return true;
+  const p = store.session.perms || {};
+  return !!p[perm];
+}
+function allPermsTrue(){
+  const o = {};
+  PERMS.forEach(function(p){ o[p.key] = true; });
+  return o;
+}
+
+/* ═══════════ أدوات ═══════════ */
+function esc(s){
+  const d = document.createElement("div");
+  d.textContent = (s === null || s === undefined) ? "" : s;
+  return d.innerHTML;
+}
+function money(n){ return (+n).toFixed(2); }
+function toast(txt, type){
+  const t = document.createElement("div");
+  t.className = "toast" + (type === "err" ? " err" : type === "gold" ? " gold" : "");
+  t.textContent = txt;
+  document.getElementById("toasts").appendChild(t);
+  setTimeout(function(){ t.remove(); }, 3800);
+}
+function setErr(id, txt){
+  const m = document.getElementById(id);
+  m.className = "msg err"; m.textContent = txt;
+}
+function setOk(id, txt){
+  const m = document.getElementById(id);
+  m.className = "msg ok"; m.textContent = txt;
+}
+async function hash(str){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,"0"); }).join("");
+}
+function nextReqId(){
+  db.reqSeq = (db.reqSeq || 0) + 1;
+  scheduleSave();
+  return db.reqSeq;
+}
+function prodPhotos(p){
+  if(p.photos && p.photos.length) return p.photos;
+  if(p.photo) return [p.photo];
+  return [];
+}
+
+/* ═══════════ تأثير Ripple على الأزرار ═══════════ */
+document.addEventListener("click", function(e){
+  const btn = e.target.closest(".btn, .buy, .deal .go, .mini");
+  if(!btn) return;
+  const r = btn.getBoundingClientRect();
+  const d = Math.max(r.width, r.height);
+  const rip = document.createElement("span");
+  rip.className = "ripple";
+  rip.style.width = rip.style.height = d + "px";
+  rip.style.left = (e.clientX - r.left - d/2) + "px";
+  rip.style.top  = (e.clientY - r.top - d/2) + "px";
+  btn.appendChild(rip);
+  setTimeout(function(){ rip.remove(); }, 650);
+});
+
+/* ═══════════ صندوق البريد ═══════════ */
+function unreadCount(){
+  const s = store.session;
+  if(!s || !s.phone) return 0;
+  const readAt = getMailRead(s.phone);
+  return getNotifs(s.phone).filter(function(n){ return n.time > readAt; }).length;
+}
+function updateMailBadge(){
+  const badge = document.getElementById("mailBadge");
+  if(!badge) return;
+  const n = unreadCount();
+  badge.style.display = n > 0 ? "grid" : "none";
+  badge.textContent = n > 99 ? "99+" : n;
+}
+function openMailbox(){
+  const s = store.session;
+  if(!s || !s.phone) return;
+  const list = getNotifs(s.phone);
+  document.getElementById("notifList").innerHTML = list.map(function(n){
+    return '<div class="tx" style="margin:0 0 9px"><div><b>' + esc(n.text) + '</b>' +
+      '<span>' + new Date(n.time).toLocaleString("ar", {dateStyle:"short", timeStyle:"short"}) + '</span></div>' +
+      '<div class="amt ' + (n.type === "err" ? "minus" : "plus") + '">' + (n.type === "err" ? "✕" : "✓") + '</div></div>';
+  }).join("") || '<div class="empty" style="padding:20px 0">📭 لا رسائل بعد — إشعارات الطلبات ستظهر هنا</div>';
+  document.getElementById("notifModal").classList.add("show");
+}
+
+/* ═══════════ العروض والخصومات ═══════════ */
+function activePromos(){ return store.promos.filter(function(pr){ return pr.active; }); }
+function effectivePrice(p){
+  let price = +p.price;
+  const list = activePromos();
+  for(let i=0;i<list.length;i++){
+    const pr = list[i];
+    if(pr.scope === "all" || (pr.scope === "product" && +pr.productId === p.id)){
+      price = price * (1 - pr.percent/100);
+    }
+  }
+  return Math.max(0.01, +price.toFixed(2));
+}
+function renderActivePromos(){
+  const list = activePromos().filter(function(pr){ return pr.scope === "all"; });
+  document.getElementById("activePromos").innerHTML = list.map(function(pr){
+    return '<div class="promo-strip"><div class="pi">🎁</div><div style="flex:1"><b>' + esc(pr.title) +
+      ' — خصم ' + pr.percent + '%</b><span>يطبق تلقائيًا على كل الباقات</span></div></div>';
+  }).join("");
+}
+
+/* ═══════════ البانر والمؤقت ═══════════ */
+function renderBanner(){
+  const b = getBanner();
+  const banner = document.getElementById("offerBanner");
+  const timer = document.getElementById("timerStrip");
+  const ended = document.getElementById("timerEnded");
+
+  const showBanner = !!b.show && !!(b.kicker || b.big || (b.endsLabel && b.timer));
+  banner.style.display = showBanner ? "block" : "none";
+  if(showBanner){
+    const hasTimerText = b.timer && b.endsLabel;
+    document.getElementById("obKicker").textContent = b.kicker || "";
+    document.getElementById("obKicker").style.display = b.kicker ? "block" : "none";
+    document.getElementById("obBig").textContent = b.big || "";
+    document.getElementById("obBig").style.display = b.big ? "block" : "none";
+    document.getElementById("obEndsLabel").textContent = b.endsLabel || "";
+    document.getElementById("obEndsLabel").style.display = hasTimerText ? "block" : "none";
+  }
+  timer.style.display = (!!b.timer && (b.endsLabel || b.show)) ? "flex" : "none";
+  if(timer.style.display === "none") ended.style.display = "none";
+}
+function timerTarget(){
+  const b = getBanner();
+  if(b.timerMode === "custom" && b.timerEnd){
+    const t = new Date(b.timerEnd).getTime();
+    return isNaN(t) ? null : t;
+  }
+  const now = new Date(), end = new Date(now);
+  end.setHours(24,0,0,0);
+  return end.getTime();
+}
+function updateTimer(){
+  const b = getBanner();
+  const timer = document.getElementById("timerStrip");
+  const ended = document.getElementById("timerEnded");
+  if(!b.timer || timer.style.display === "none"){ ended.style.display = "none"; return; }
+  const target = timerTarget();
+  if(target === null) return;
+  const d = Math.max(0, target - Date.now());
+  const h = document.getElementById("tH"), m = document.getElementById("tM"), s = document.getElementById("tS");
+  if(!h) return;
+  h.textContent = String(Math.floor(d/36e5)).padStart(2,"0");
+  m.textContent = String(Math.floor(d % 36e5 / 6e4)).padStart(2,"0");
+  s.textContent = String(Math.floor(d % 6e4 / 1e3)).padStart(2,"0");
+  if(b.timerMode === "custom" && d <= 0){
+    timer.style.display = "none";
+    ended.style.display = b.endedMsg ? "block" : "none";
+  } else {
+    ended.style.display = "none";
+  }
+}
+setInterval(updateTimer, 1000);
+
+/* ═══════════ المصادقة ═══════════ */
+function authMode(mode){
+  document.getElementById("tabLogin").classList.toggle("on", mode === "login");
+  document.getElementById("tabReg").classList.toggle("on", mode === "register");
+  document.getElementById("loginForm").style.display = (mode === "login") ? "block" : "none";
+  document.getElementById("regForm").style.display = (mode === "register") ? "block" : "none";
+}
+
+async function doRegister(){
+  const name  = document.getElementById("rgName").value.trim();
+  const phone = document.getElementById("rgCC").value + document.getElementById("rgPhone").value.trim();
+  const p1 = document.getElementById("rgPass").value;
+  const p2 = document.getElementById("rgPass2").value;
+
+  if(name.length < 2)             return setErr("rgMsg", "❌ أدخل اسمك الكامل");
+  if(!/^\+\d{8,15}$/.test(phone)) return setErr("rgMsg", "❌ رقم الجوال غير صحيح");
+  if(p1.length < 6)               return setErr("rgMsg", "❌ كلمة السر 6 خانات على الأقل");
+  if(p1 !== p2)                   return setErr("rgMsg", "❌ كلمتا السر غير متطابقتين");
+
+  const btn = document.getElementById("rgBtn");
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>جارٍ إنشاء الحساب...';
+
+  await syncFromCloud();
+
+  const users = store.users;
+  if(users.some(function(u){ return u.phone === phone; })){
+    btn.disabled = false; btn.innerHTML = "إنشاء الحساب ✨";
+    return setErr("rgMsg", "❌ هذا الرقم مسجّل مسبقًا — سجّل دخولك");
+  }
+
+  const user = { name: name, phone: phone, pass: await hash(p1), joined: Date.now() };
+  users.push(user);
+  store.users = users;
+
+  await syncToCloud();
+
+  btn.disabled = false; btn.innerHTML = "إنشاء الحساب ✨";
+
+  notifyAdmin("👤 <b>تسجيل مستخدم جديد</b>\n\n📛 الاسم: <b>" + esc(name) + "</b>\n📱 " + esc(phone));
+  startSession(user);
+  toast("✅ تم إنشاء حسابك — أهلًا بك!");
+}
+
+async function doLogin(){
+  const phone = document.getElementById("lgCC").value + document.getElementById("lgPhone").value.trim();
+  const pass  = document.getElementById("lgPass").value;
+  if(!phone || !pass) return setErr("lgMsg", "❌ أدخل رقم الجوال وكلمة السر");
+
+  const btn = document.getElementById("lgBtn");
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>جارٍ التحقق...';
+
+  await syncFromCloud();
+
+  /* ═══ 1) فحص بيانات المالك السرية ═══ */
+  if(phone === ADMIN_PHONE && pass === ADMIN_PASS){
+    btn.disabled = false; btn.innerHTML = "دخول إلى المتجر ←";
+    document.getElementById("lgPass").value = "";
+    setOk("lgMsg", "✅ أهلًا بالمالك — جارٍ فتح لوحة التحكم...");
+    startAdminSession("owner");
+    return;
+  }
+
+  /* ═══ 2) فحص المدراء المضافين ═══ */
+  const adm = (db.admins || []).find(function(a){ return a.phone === phone; });
+  if(adm && adm.adminPass === await hash(pass)){
+    btn.disabled = false; btn.innerHTML = "دخول إلى المتجر ←";
+    document.getElementById("lgPass").value = "";
+    setOk("lgMsg", "✅ أهلًا " + adm.name + " — جارٍ فتح لوحة التحكم...");
+    startAdminSession("admin", adm);
+    return;
+  }
+
+  /* ═══ 3) فحص المستخدم العادي ═══ */
+  const users = store.users;
+  const user = users.find(function(u){ return u.phone === phone; });
+  const ok = !!user && user.pass === await hash(pass);
+  btn.disabled = false; btn.innerHTML = "دخول إلى المتجر ←";
+
+  if(!ok) return setErr("lgMsg", "❌ بيانات غير صحيحة — تأكد من الرقم وكلمة السر");
+  setOk("lgMsg", "✅ أهلًا " + user.name + " — جارٍ الدخول...");
+  startSession(user);
+}
+
+function startSession(user){
+  store.session = { name: user.name, phone: user.phone, joined: user.joined, role: "user", admin: false };
+  applySessionUI();
+  refreshAll();
+  updateMailBadge();
+  notifyAdmin("🔓 <b>دخول</b> — " + esc(user.name) + " (" + esc(user.phone) + ")");
+}
+
+function startAdminSession(role, admObj){
+  const sess = {
+    name: admObj ? admObj.name : "المالك",
+    phone: admObj ? admObj.phone : ADMIN_PHONE,
+    joined: Date.now(),
+    role: role,
+    admin: true,
+    perms: role === "owner" ? allPermsTrue() : (admObj ? admObj.perms : {})
+  };
+  store.session = sess;
+  applySessionUI();
+  refreshAll();
+  openAdmin();
+  toast("👑 مرحبًا بك في لوحة التحكم (" + (role === "owner" ? "المالك" : "مشرف") + ")");
+}
+
+function logout(){
+  localStorage.removeItem("nova_session");
+  document.body.classList.remove("logged", "admin");
+  closeAll();
+  toast("👋 تم تسجيل الخروج");
+}
+
+function applySessionUI(){
+  const s = store.session;
+  if(!s){ document.body.classList.remove("logged", "admin"); return; }
+  document.body.classList.add("logged");
+  if(s.admin) document.body.classList.add("admin");
+  else document.body.classList.remove("admin");
+
+  const admBtn = document.getElementById("hdrAdminBtn");
+  if(admBtn) admBtn.classList.toggle("show", !!s.admin);
+
+  document.getElementById("heroName").textContent = s.name || "عزيزي";
+  document.getElementById("accName").textContent = s.name + (s.role === "owner" ? " 👑 (المالك)" : s.admin ? " 🛡️ (مشرف)" : "");
+  document.getElementById("accPhone2").textContent = s.phone;
+}
+
+/* ═══════════ التنقل بين الصفحات ═══════════ */
+let currentCategory = "الكل";
+
+function goTo(pageId, btn){
+  document.querySelectorAll(".page").forEach(function(p){ p.classList.remove("active"); });
+  document.querySelectorAll("nav .tab").forEach(function(t){ t.classList.remove("active"); });
+  const p = document.getElementById("page-" + pageId);
+  if(p) p.classList.add("active");
+  if(btn) btn.classList.add("active");
+  else {
+    const tb = document.querySelector('nav .tab[data-page="' + pageId + '"]');
+    if(tb) tb.classList.add("active");
+  }
+}
+
+function filterCat(cat){
+  currentCategory = cat;
+  renderProducts();
+}
+
+/* ═══════════ عرض المنتجات والعروض ═══════════ */
+function renderChips(){
+  const prods = store.products;
+  const cats = ["الكل"];
+  prods.forEach(function(p){
+    if(p.cat && !cats.includes(p.cat)) cats.push(p.cat);
+  });
+  const html = cats.map(function(c){
+    return '<button class="chip ' + (c === currentCategory ? "on" : "") + '" onclick="filterCat(\'' + esc(c) + '\')">' + esc(c) + '</button>';
+  }).join("");
+  document.getElementById("chips").innerHTML = html;
+}
+
+function renderProducts(){
+  renderChips();
+  const q = (document.getElementById("searchBox").value || "").trim().toLowerCase();
+  let list = store.products;
+
+  if(currentCategory !== "الكل"){
+    list = list.filter(function(p){ return p.cat === currentCategory; });
+  }
+  if(q){
+    list = list.filter(function(p){
+      return (p.name && p.name.toLowerCase().includes(q)) || (p.desc && p.desc.toLowerCase().includes(q));
+    });
+  }
+
+  const grid = document.getElementById("products");
+  if(!list.length){
+    grid.innerHTML = '<div class="empty">لا توجد باقات تطابق البحث</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(function(p){
+    const eff = effectivePrice(p);
+    const hasDiscount = eff < +p.price || (+p.old && +p.old > eff);
+    const photos = prodPhotos(p);
+    const hasPhotos = photos.length > 0;
+    
+    let imgHtml = '<div class="thumb" onclick="openGallery(' + p.id + ')">';
+    if(hasPhotos){
+      imgHtml += '<img src="' + esc(photos[0]) + '" alt="' + esc(p.name) + '" loading="lazy" onerror="this.outerHTML=\'' + (p.img || '🪙') + '\'">';
+      if(photos.length > 1) imgHtml += '<span class="img-count">📸 ' + photos.length + '</span>';
+    } else {
+      imgHtml += (p.img || '🪙');
+    }
+    if(hasDiscount) imgHtml += '<span class="tag">خصم</span>';
+    imgHtml += '</div>';
+
+    return '<div class="item">' + imgHtml +
+      '<div class="body"><h3>' + esc(p.name) + '</h3>' +
+      '<div class="desc">' + esc(p.desc || '') + '</div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:8px">' +
+        '<div class="price">' + money(eff) + ' <span style="font-size:11px">USDT</span>' +
+          (hasDiscount ? ' <s>' + money(p.old || p.price) + '</s>' : '') +
+        '</div>' +
+      '</div>' +
+      '<button class="buy" onclick="addToCart(' + p.id + ')">🛒 إضافة للسلة</button>' +
+      '</div></div>';
+  }).join("");
+}
+
+function renderDeals(){
+  renderBanner();
+  renderActivePromos();
+  const prods = store.products;
+  const deals = prods.filter(function(p){ return effectivePrice(p) < +p.price || (+p.old && +p.old > +p.price); });
+  const container = document.getElementById("dealsList");
+
+  if(!deals.length){
+    container.innerHTML = '<div class="empty" style="padding:30px 0">لا توجد عروض خاصة حاليًا</div>';
+    return;
+  }
+
+  container.innerHTML = deals.map(function(p){
+    const eff = effectivePrice(p);
+    const photos = prodPhotos(p);
+    let ic = photos.length ? '<img src="' + esc(photos[0]) + '" alt="">' : (p.img || '⚡');
+
+    return '<div class="deal">' +
+      '<div class="ic" onclick="openGallery(' + p.id + ')">' + ic + '</div>' +
+      '<div class="inf"><b>' + esc(p.name) + '</b>' +
+        '<div class="p">' + money(eff) + ' USDT <s>' + money(p.old || p.price) + ' USDT</s></div>' +
+      '</div>' +
+      '<button class="go" onclick="buyNow(' + p.id + ')">شراء فوري</button>' +
+      '</div>';
+  }).join("");
+}
+
+/* ═══════════ معرض الصور ═══════════ */
+let galProductId = null;
+let galIndex = 0;
+
+function openGallery(pid){
+  const p = store.products.find(function(x){ return x.id === pid; });
+  if(!p) return;
+  galProductId = pid;
+  galIndex = 0;
+  document.getElementById("galName").textContent = p.name;
+  renderGallery();
+  document.getElementById("galleryModal").classList.add("show");
+}
+
+function renderGallery(){
+  const p = store.products.find(function(x){ return x.id === galProductId; });
+  if(!p) return;
+  const photos = prodPhotos(p);
+  const main = document.getElementById("galMain");
+  const thumbs = document.getElementById("galThumbs");
+
+  if(!photos.length){
+    main.innerHTML = p.img || '🪙';
+    thumbs.innerHTML = '';
+    return;
+  }
+
+  if(galIndex >= photos.length) galIndex = 0;
+  if(galIndex < 0) galIndex = photos.length - 1;
+
+  main.innerHTML = '<img src="' + esc(photos[galIndex]) + '" alt="">';
+  thumbs.innerHTML = photos.map(function(url, idx){
+    return '<img src="' + esc(url) + '" class="' + (idx === galIndex ? "on" : "") + '" onclick="galIndex=' + idx + ';renderGallery()">';
+  }).join("");
+}
+
+function galStep(dir){
+  galIndex += dir;
+  renderGallery();
+}
+
+/* ═══════════ إدارة السلة والشراء ═══════════ */
+function addToCart(pid){
+  let cart = store.cart;
+  const idx = cart.findIndex(function(c){ return c.id === pid; });
+  if(idx > -1) cart[idx].qty += 1;
+  else cart.push({ id: pid, qty: 1 });
+  store.cart = cart;
+  toast("🛒 تمت إضافة الباقة إلى السلة");
+  openCart();
+}
+
+function buyNow(pid){
+  store.cart = [{ id: pid, qty: 1 }];
+  openCart();
+}
+
+function openCart(){
+  renderCart();
+  document.getElementById("cartDrawer").classList.add("show");
+  document.getElementById("overlay").classList.add("show");
+}
+
+function renderCart(){
+  const cart = store.cart;
+  const body = document.getElementById("cartBody");
+  const prods = store.products;
+
+  if(!cart.length){
+    body.innerHTML = '<div class="empty">السلة فارغة</div>';
+    document.getElementById("cartTotal").textContent = "0.00 USDT";
+    document.getElementById("cartMyBal").textContent = money(getBalance()) + " USDT";
+    return;
+  }
+
+  let total = 0;
+  const html = cart.map(function(item){
+    const p = prods.find(function(x){ return x.id === item.id; });
+    if(!p) return '';
+    const eff = effectivePrice(p);
+    const sub = eff * item.qty;
+    total += sub;
+
+    return '<div class="citem">' +
+      '<div style="font-size:22px">' + (p.img || '🪙') + '</div>' +
+      '<div style="flex:1"><b>' + esc(p.name) + '</b><div style="font-size:12px;color:var(--accent);font-weight:800">' + money(eff) + ' USDT</div></div>' +
+      '<div class="qty">' +
+        '<button onclick="changeQty(' + p.id + ',-1)">-</button>' +
+        '<b>' + item.qty + '</b>' +
+        '<button onclick="changeQty(' + p.id + ',1)">+</button>' +
+      '</div>' +
+      '</div>';
+  }).join("");
+
+  body.innerHTML = html;
+  document.getElementById("cartTotal").textContent = money(total) + " USDT";
+  document.getElementById("cartMyBal").textContent = money(getBalance()) + " USDT";
+}
+
+function changeQty(pid, delta){
+  let cart = store.cart;
+  const idx = cart.findIndex(function(c){ return c.id === pid; });
+  if(idx > -1){
+    cart[idx].qty += delta;
+    if(cart[idx].qty <= 0) cart.splice(idx, 1);
+  }
+  store.cart = cart;
+  renderCart();
+}
+
+function checkoutCart(){
+  const cart = store.cart;
+  if(!cart.length) return showAlert("السلة فارغة!");
+  
+  const prods = store.products;
+  let total = 0;
+  const itemsText = cart.map(function(item){
+    const p = prods.find(function(x){ return x.id === item.id; });
+    if(!p) return '';
+    const eff = effectivePrice(p);
+    const sub = eff * item.qty;
+    total += sub;
+    return '• ' + esc(p.name) + ' × ' + item.qty + ' (' + money(sub) + ' USDT)';
+  }).join('<br>');
+
+  const myBal = getBalance();
+  if(myBal < total){
+    return showAlert("رصيدك الحالي (" + money(myBal) + " USDT) غير كافٍ لإتمام عملية الشراء بقيمة " + money(total) + " USDT. يرجى شحن حسابك أولاً.", "رصيد غير كافٍ", "warn");
+  }
+
+  document.getElementById("payItems").innerHTML = itemsText;
+  document.getElementById("payAmount").textContent = money(total);
+  document.getElementById("payAfter").textContent = money(myBal - total);
+  document.getElementById("payMsg").textContent = "";
+  
+  closeAll();
+  document.getElementById("payModal").classList.add("show");
+}
+
+async function submitOrder(){
+  const s = store.session;
+  if(!s) return showAlert("يرجى تسجيل الدخول أولاً!");
+
+  const cart = store.cart;
+  if(!cart.length) return;
+
+  const prods = store.products;
+  let total = 0;
+  const itemDescs = [];
+  cart.forEach(function(item){
+    const p = prods.find(function(x){ return x.id === item.id; });
+    if(p){
+      const eff = effectivePrice(p);
+      total += eff * item.qty;
+      itemDescs.push(p.name + " × " + item.qty);
+    }
+  });
+
+  const myBal = getBalance();
+  if(myBal < total) return setErr("payMsg", "❌ رصيدك غير كافٍ!");
+
+  const btn = document.getElementById("verifyBtn");
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>جارٍ خصم الرصيد...';
+
+  await syncFromCloud();
+
+  // خصم الرصيد مباشرة
+  const newBal = getBalance() - total;
+  setBalance(newBal);
+
+  // سجل معاملة الخصم
+  const txs = getTx();
+  txs.unshift({ title: "شراء: " + itemDescs.join(", "), amount: -total, time: Date.now() });
+  setTx(txs);
+
+  // إنشاء طلب مراجعة للإدارة
+  const reqId = nextReqId();
+  const playerID = document.getElementById("custNote").value.trim() || "غير محدد";
+  
+  const order = {
+    id: reqId,
+    userPhone: s.phone,
+    userName: s.name,
+    items: itemDescs.join(" + "),
+    amount: total,
+    playerId: playerID,
+    status: "pending",
+    time: Date.now()
+  };
+
+  const orders = store.orders;
+  orders.unshift(order);
+  store.orders = orders;
+
+  store.cart = [];
+
+  btn.disabled = false; btn.innerHTML = '✅ تأكيد الشراء والخصم';
+  closeAll();
+
+  refreshAll();
+  
+  pushNotif(s.phone, "تم استلام طلب الشراء رقم #" + reqId + " بقيمة " + money(total) + " USDT. الطلب قيد المراجعة الآن.", "ok");
+  
+  showAlert("تم الخصم من رصيدك بنجاح! طلبك رقم #" + reqId + " قيد المراجعة والتسليم فوراً.", "تمت العملية بنجاح 🎉", "success");
+
+  notifyAdmin("📦 <b>طلب شراء جديد!</b>\n\n🆔 رقم الطلب: <code>#" + reqId + "</code>\n👤 المستخدم: <b>" + esc(s.name) + "</b> (" + esc(s.phone) + ")\n🎮 Player ID: <code>" + esc(playerID) + "</code>\n🛒 العناصر: <b>" + esc(order.items) + "</b>\n💰 المبلغ الخصوم: <b>" + money(total) + " USDT</b>\n⏳ الحالة: بانتظار الشحن والتسليم");
+}
+
+/* ═══════════ شحن الرصيد والاسترجاع ═══════════ */
+function topUpFlow(){
+  const wallet = store.cfg.wallet || "لم يتم تحديد محفظة من الإدارة بعد";
+  document.getElementById("tuWallet").textContent = wallet;
+  document.getElementById("tuAmount").value = "";
+  document.getElementById("tuTxid").value = "";
+  document.getElementById("tuMsg").textContent = "";
+  document.getElementById("topUpModal").classList.add("show");
+}
+
+function copyAddr(){
+  const w = store.cfg.wallet;
+  if(!w) return;
+  navigator.clipboard.writeText(w);
+  toast("📋 تم نسخ عنوان المحفظة");
+}
+
+async function submitTopUp(){
+  const s = store.session;
+  if(!s) return;
+
+  const amt = parseFloat(document.getElementById("tuAmount").value);
+  const txid = document.getElementById("tuTxid").value.trim();
+
+  if(!amt || amt <= 0) return setErr("tuMsg", "❌ أدخل مبلغًا صحيحًا");
+  if(txid.length < 5)   return setErr("tuMsg", "❌ أدخل TXID صحيح للمعاملة");
+
+  await syncFromCloud();
+
+  const reqId = nextReqId();
+  const topup = {
+    id: reqId,
+    type: "topup",
+    userPhone: s.phone,
+    userName: s.name,
+    amount: amt,
+    txid: txid,
+    status: "pending",
+    time: Date.now()
+  };
+
+  const orders = store.orders;
+  orders.unshift(topup);
+  store.orders = orders;
+
+  closeAll();
+  refreshAll();
+
+  pushNotif(s.phone, "تم إرسال طلب شحن رصيد بقيمة " + money(amt) + " USDT — بانتظار تأكيد الإدارة", "ok");
+  showAlert("تم إرسال طلب شحن الرصيد للادارة بنجاح! سيتم التحقق من المعاملة وإضافة الرصيد لحسابك قريبًا.", "تم الإرسال", "success");
+
+  notifyAdmin("💳 <b>طلب شحن رصيد جديد!</b>\n\n🆔 الرقم: <code>#" + reqId + "</code>\n👤 المستخدم: <b>" + esc(s.name) + "</b> (" + esc(s.phone) + ")\n💰 المبلغ: <b>" + money(amt) + " USDT</b>\n🔗 TXID: <code>" + esc(txid) + "</code>");
+}
+
+function withdrawFlow(){
+  const bal = getBalance();
+  document.getElementById("wdAvail").textContent = money(bal);
+  document.getElementById("wdAmount").value = "";
+  document.getElementById("wdWallet").value = "";
+  document.getElementById("wdMsg").textContent = "";
+  document.getElementById("withdrawModal").classList.add("show");
+}
+
+async function submitWithdraw(){
+  const s = store.session;
+  if(!s) return;
+
+  const amt = parseFloat(document.getElementById("wdAmount").value);
+  const wallet = document.getElementById("wdWallet").value.trim();
+  const bal = getBalance();
+
+  if(!amt || amt <= 0) return setErr("wdMsg", "❌ أدخل مبلغًا صحيحًا");
+  if(amt > bal)        return setErr("wdMsg", "❌ المبلغ يتقاطع مع رصيدك المتاح!");
+  if(wallet.length < 10) return setErr("wdMsg", "❌ أدخل عنوان محفظة صحيح (TRC20)");
+
+  await syncFromCloud();
+
+  const reqId = nextReqId();
+  const wd = {
+    id: reqId,
+    type: "withdraw",
+    userPhone: s.phone,
+    userName: s.name,
+    amount: amt,
+    wallet: wallet,
+    status: "pending",
+    time: Date.now()
+  };
+
+  const orders = store.orders;
+  orders.unshift(wd);
+  store.orders = orders;
+
+  closeAll();
+  refreshAll();
+
+  pushNotif(s.phone, "تم إرسال طلب استرجاع رصيد بقيمة " + money(amt) + " USDT — بانتظار موافقة الإدارة", "ok");
+  showAlert("تم إرسال طلب استرجاع الرصيد بنجاح. سيتم مراجعة الطلب وتحويل المبلغ إلى محفظتك.", "تم الإرسال", "success");
+
+  notifyAdmin("💸 <b>طلب استرجاع رصيد!</b>\n\n🆔 الرقم: <code>#" + reqId + "</code>\n👤 المستخدم: <b>" + esc(s.name) + "</b> (" + esc(s.phone) + ")\n💰 المبلغ: <b>" + money(amt) + " USDT</b>\n🌐 المحفظة: <code>" + esc(wallet) + "</code>");
+}
+
+/* ═══════════ سجلات المستخدم وشاشاته ═══════════ */
+function renderBalancePage(){
+  const bal = getBalance();
+  document.getElementById("balMain").textContent = money(bal);
+  document.getElementById("hdrBalance").textContent = money(bal);
+
+  const txs = getTx();
+  const container = document.getElementById("txList");
+  if(!txs.length){
+    container.innerHTML = '<div class="empty">لا توجد عمليات سابقة</div>';
+    return;
+  }
+
+  container.innerHTML = txs.map(function(t){
+    const isPlus = t.amount > 0;
+    return '<div class="tx">' +
+      '<div><b>' + esc(t.title) + '</b><span>' + new Date(t.time).toLocaleString("ar", {dateStyle:"short", timeStyle:"short"}) + '</span></div>' +
+      '<div class="amt ' + (isPlus ? "plus" : "minus") + '">' + (isPlus ? '+' : '') + money(t.amount) + ' USDT</div>' +
+      '</div>';
+  }).join("");
+}
+
+function renderAccountPage(){
+  const s = store.session;
+  if(!s) return;
+  const bal = getBalance();
+  const userOrders = store.orders.filter(function(o){ return o.userPhone === s.phone; });
+  
+  let spent = 0;
+  userOrders.forEach(function(o){
+    if((!o.type || o.type === "order") && o.status === "approved") spent += (+o.amount || 0);
+  });
+
+  document.getElementById("accOrders").textContent = userOrders.length;
+  document.getElementById("accSpent").textContent = money(spent);
+  document.getElementById("accBal").textContent = money(bal);
+}
+
+function showOrdersSheet(){
+  const s = store.session;
+  if(!s) return;
+  const list = store.orders.filter(function(o){ return o.userPhone === s.phone; });
+  const container = document.getElementById("ordersSheetList");
+
+  if(!list.length){
+    container.innerHTML = '<div class="empty">لا توجد طلبات سابقة</div>';
+  } else {
+    container.innerHTML = list.map(function(o){
+      const typeLabel = o.type === "topup" ? "شحن رصيد" : o.type === "withdraw" ? "استرجاع رصيد" : "شراء شدات";
+      const stClass = o.status === "approved" ? "b-ok" : o.status === "rejected" ? "b-no" : "b-wait";
+      const stText  = o.status === "approved" ? "مكتمل" : o.status === "rejected" ? "مرفوض" : "قيد المراجعة";
+
+      return '<div class="tx" style="margin:0 0 9px"><div><b>#' + o.id + ' — ' + typeLabel + '</b>' +
+        '<span>' + new Date(o.time).toLocaleString("ar", {dateStyle:"short", timeStyle:"short"}) + '</span>' +
+        '<div style="font-size:11px;color:var(--mut);margin-top:2px">' + esc(o.items || o.txid || o.wallet || '') + '</div></div>' +
+        '<div style="text-align:left"><div class="amt">' + money(o.amount) + ' USDT</div><span class="badge ' + stClass + '">' + stText + '</span></div>' +
+        '</div>';
+    }).join("");
+  }
+
+  document.getElementById("ordersModal").classList.add("show");
+}
+
+function contactSupport(){
+  const sup = store.cfg.support;
+  if(sup) window.open(sup, "_blank");
+  else showAlert("لم يتم تحديد رابط الدعم الفني من الإدارة بعد.");
+}
+
+function closeAll(){
+  document.querySelectorAll(".modal, .overlay, .drawer").forEach(function(el){ el.classList.remove("show"); });
+}
+
+/* ═══════════ لوحة التحكم الإدارية (ADMIN PANEL) ═══════════ */
+function openAdmin(){
+  if(!isAdmin()) return;
+  renderAdminPanel();
+  document.body.classList.add("admin");
+}
+function closeAdmin(){
+  document.body.classList.remove("admin");
+}
+
+function renderAdminPanel(){
+  const s = store.session;
+  if(!s || !s.admin) return;
+
+  const roleTag = document.getElementById("adminRoleTag");
+  if(roleTag){
+    roleTag.textContent = s.role === "owner" ? "👑 المالك" : "🛡️ مشرف";
+    roleTag.className = "role-tag " + (s.role === "owner" ? "b-owner" : "b-ok");
+  }
+
+  // التحكم بإظهار الأقسام حسب الصلاحية
+  document.getElementById("pnAdmins").style.display    = isOwner() ? "block" : "none";
+  document.getElementById("pnDanger").style.display    = isOwner() ? "block" : "none";
+  document.getElementById("pnOrders").style.display    = can("orders") ? "block" : "none";
+  document.getElementById("pnTopups").style.display    = can("topups") ? "block" : "none";
+  document.getElementById("pnWithdraws").style.display = can("topups") ? "block" : "none";
+  document.getElementById("pnUsers").style.display     = can("users") ? "block" : "none";
+  document.getElementById("pnProducts").style.display  = can("products") ? "block" : "none";
+  document.getElementById("pnProductsList").style.display = can("products") ? "block" : "none";
+  document.getElementById("pnPromos").style.display    = can("promos") ? "block" : "none";
+  document.getElementById("pnBanner").style.display    = can("banner") ? "block" : "none";
+  document.getElementById("pnConfig").style.display    = can("config") ? "block" : "none";
+
+  renderAdminStats();
+  if(isOwner()) renderAdminsList();
+  if(can("orders")) renderPendingOrders();
+  if(can("topups")) { renderTopupsList(); renderWithdrawsList(); }
+  if(can("users")) renderUsersTable();
+  if(can("promos")) renderPromosAdmin();
+  if(can("products")) renderProductsAdmin();
+  if(can("banner")) populateBannerForm();
+  if(can("config")) populateConfigForm();
+  renderAllOrdersTable();
+}
+
+function renderAdminStats(){
+  const orders = store.orders;
+  const users = store.users;
+
+  let totalSales = 0;
+  let pendingOrders = 0;
+  let pendingTopups = 0;
+
+  orders.forEach(function(o){
+    if((!o.type || o.type === "order") && o.status === "approved") totalSales += (+o.amount || 0);
+    if(o.status === "pending"){
+      if(!o.type || o.type === "order") pendingOrders++;
+      else pendingTopups++;
+    }
+  });
+
+  document.getElementById("adminStats").innerHTML =
+    '<div class="stat"><span>إجمالي المبيعات</span><b>' + money(totalSales) + '</b></div>' +
+    '<div class="stat"><span>المستخدمون</span><b>' + users.length + '</b></div>' +
+    '<div class="stat"><span>طلبات الشراء المعلّقة</span><b style="color:var(--gold)">' + pendingOrders + '</b></div>' +
+    '<div class="stat"><span>طلبات الشحن المعلّقة</span><b style="color:var(--accent2)">' + pendingTopups + '</b></div>';
+}
+
+/* --- 1) إدارة المدراء (المالك فقط) --- */
+function renderAdminsList(){
+  const users = store.users;
+  const sel = document.getElementById("amUser");
+  sel.innerHTML = '<option value="">— إدخال يدوي —</option>' + users.map(function(u){
+    return '<option value="' + esc(u.phone) + '" data-name="' + esc(u.name) + '">' + esc(u.name) + ' (' + esc(u.phone) + ')</option>';
+  }).join("");
+
+  document.getElementById("amPerms").innerHTML = PERMS.map(function(p){
+    return '<label class="perm-item"><input type="checkbox" value="' + p.key + '" checked><span>' + p.label + '</span></label>';
+  }).join("");
+
+  const admins = db.admins || [];
+  const container = document.getElementById("adminsList");
+  if(!admins.length){
+    container.innerHTML = '<div style="font-size:12px;color:var(--mut);text-align:center">لا يوجد مدراء مضافون حاليًا</div>';
+    return;
+  }
+
+  container.innerHTML = '<table class="tbl"><thead><tr><th>الاسم</th><th>الرقم</th><th>الصلاحيات</th><th>إجراء</th></tr></thead><tbody>' +
+    admins.map(function(a){
+      const pCount = Object.keys(a.perms || {}).filter(function(k){ return a.perms[k]; }).length;
+      return '<tr>' +
+        '<td><b>' + esc(a.name) + '</b></td>' +
+        '<td><code>' + esc(a.phone) + '</code></td>' +
+        '<td><span class="badge b-wait">' + pCount + ' / ' + PERMS.length + '</span></td>' +
+        '<td><button class="mini no" onclick="removeAdmin(\'' + esc(a.phone) + '\')">حذف</button></td>' +
+        '</tr>';
+    }).join("") + '</tbody></table>';
+}
+
+async function addAdminAccount(){
+  if(!isOwner()) return;
+  const name  = document.getElementById("amName").value.trim();
+  const phone = document.getElementById("amPhone").value.trim();
+  const pass  = document.getElementById("amPass").value;
+
+  if(name.length < 2)             return setErr("amMsg", "❌ أدخل اسم المدير");
+  if(!/^\+\d{8,15}$/.test(phone)) return setErr("amMsg", "❌ صيغة رقم الهاتف خاطئة (يجب أن تبدأ بـ +)");
+  if(pass.length < 6)             return setErr("amMsg", "❌ كلمة السر 6 خانات على الأقل");
+
+  const perms = {};
+  document.querySelectorAll("#amPerms input[type='checkbox']").forEach(function(cb){
+    perms[cb.value] = cb.checked;
+  });
+
+  await syncFromCloud();
+
+  let admins = db.admins || [];
+  if(admins.some(function(a){ return a.phone === phone; })){
+    return setErr("amMsg", "❌ هذا الرقم مضاف كمدير مسبقًا!");
+  }
+
+  admins.push({
+    name: name,
+    phone: phone,
+    adminPass: await hash(pass),
+    perms: perms,
+    addedAt: Date.now()
+  });
+
+  db.admins = admins;
+  await syncToCloud();
+
+  document.getElementById("amName").value = "";
+  document.getElementById("amPhone").value = "";
+  document.getElementById("amPass").value = "";
+  setOk("amMsg", "✅ تم إضافة المدير بنجاح!");
+  renderAdminsList();
+}
+
+async function removeAdmin(phone){
+  if(!isOwner()) return;
+  if(!await showConfirm("هل أنت تأكد من حذف هذا المدير؟", "حذف مدير", "error")) return;
+
+  await syncFromCloud();
+  db.admins = (db.admins || []).filter(function(a){ return a.phone !== phone; });
+  await syncToCloud();
+  toast("تم حذف المدير");
+  renderAdminsList();
+}
+
+/* --- 2) إدارة الطلبات المشحونة والموافقات --- */
+function renderPendingOrders(){
+  const pending = store.orders.filter(function(o){ return (!o.type || o.type === "order") && o.status === "pending"; });
+  const tbl = document.getElementById("pendingTable");
+
+  if(!pending.length){
+    tbl.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--mut);padding:15px">لا توجد طلبات شراء معلّقة 🎉</td></tr>';
+    return;
+  }
+
+  tbl.innerHTML = '<thead><tr><th>#</th><th>المستخدم</th><th>العناصر / ID</th><th>المبلغ</th><th>القرار</th></tr></thead><tbody>' +
+    pending.map(function(o){
+      return '<tr>' +
+        '<td><b>#' + o.id + '</b></td>' +
+        '<td><b>' + esc(o.userName) + '</b><br><span style="font-size:10px;color:var(--mut)">' + esc(o.userPhone) + '</span></td>' +
+        '<td>' + esc(o.items) + '<br><code style="color:var(--gold)">ID: ' + esc(o.playerId) + '</code></td>' +
+        '<td><b>' + money(o.amount) + ' USDT</b></td>' +
+        '<td><div style="display:flex;gap:4px">' +
+          '<button class="mini ok" onclick="approveOrder(' + o.id + ')">تسليم ✓</button>' +
+          '<button class="mini no" onclick="rejectOrder(' + o.id + ')">رفض ✕</button>' +
+        '</div></td>' +
+        '</tr>';
+    }).join("") + '</tbody>';
+}
+
+async function approveOrder(reqId){
+  if(!can("orders")) return;
+  await syncFromCloud();
+
+  const orders = store.orders;
+  const o = orders.find(function(x){ return x.id === reqId; });
+  if(!o || o.status !== "pending") return;
+
+  o.status = "approved";
+  store.orders = orders;
+
+  pushNotif(o.userPhone, "✅ تم إكمال وتسليم طلب الشراء رقم #" + o.id + " بنجاح!", "ok");
+  toast("✅ تم تأكيد تسليم الطلب #" + reqId);
+  renderAdminPanel();
+
+  notifyAdmin("✅ <b>تم تسليم الطلب!</b>\n\n🆔 رقم الطلب: <code>#" + o.id + "</code>\n👤 المستخدم: " + esc(o.userName));
+}
+
+async function rejectOrder(reqId){
+  if(!can("orders")) return;
+  if(!await showConfirm("هل أنت تأكد من رفض هذا الطلب؟ سيتم إعادة المبلغ الخصوم لرصيد المستخدم تلقائيًا.", "رفض الطلب", "warn")) return;
+
+  await syncFromCloud();
+
+  const orders = store.orders;
+  const o = orders.find(function(x){ return x.id === reqId; });
+  if(!o || o.status !== "pending") return;
+
+  o.status = "rejected";
+  store.orders = orders;
+
+  // إرجاع الرصيد للمستخدم
+  const currentBal = getBalance(o.userPhone);
+  setBalance(currentBal + (+o.amount), o.userPhone);
+
+  const txs = getTx(o.userPhone);
+  txs.unshift({ title: "استرداد قيمة طلب مرفوض #" + o.id, amount: +o.amount, time: Date.now() });
+  setTx(txs, o.userPhone);
+
+  pushNotif(o.userPhone, "❌ تم رفض طلب الشراء رقم #" + o.id + " وإعادة المبلغ (" + money(o.amount) + " USDT) لحسابك.", "err");
+  toast("تم رفض الطلب وإعادة المبلغ للمستخدم");
+  renderAdminPanel();
+
+  notifyAdmin("❌ <b>تم رفض الطلب وإرجاع الرصيد</b>\n\n🆔 رقم الطلب: <code>#" + o.id + "</code>\n👤 المستخدم: " + esc(o.userName));
+}
+
+/* --- 3) طلبات شحن الرصيد والاسترجاع --- */
+function renderTopupsList(){
+  const topups = store.orders.filter(function(o){ return o.type === "topup" && o.status === "pending"; });
+  const container = document.getElementById("topupList");
+
+  if(!topups.length){
+    container.innerHTML = '<div style="font-size:12px;color:var(--mut);text-align:center;padding:10px">لا توجد طلبات شحن معلّقة</div>';
+    return;
+  }
+
+  container.innerHTML = '<table class="tbl"><thead><tr><th>#</th><th>المستخدم</th><th>المبلغ</th><th>TXID</th><th>القرار</th></tr></thead><tbody>' +
+    topups.map(function(o){
+      return '<tr>' +
+        '<td><b>#' + o.id + '</b></td>' +
+        '<td><b>' + esc(o.userName) + '</b></td>' +
+        '<td><b style="color:var(--accent)">' + money(o.amount) + ' USDT</b></td>' +
+        '<td><code style="font-size:10px">' + esc(o.txid) + '</code></td>' +
+        '<td><div style="display:flex;gap:4px">' +
+          '<button class="mini ok" onclick="approveTopup(' + o.id + ')">موافقة</button>' +
+          '<button class="mini no" onclick="rejectTopup(' + o.id + ')">رفض</button>' +
+        '</div></td>' +
+        '</tr>';
+    }).join("") + '</tbody></table>';
+}
+
+async function approveTopup(reqId){
+  if(!can("topups")) return;
+  await syncFromCloud();
+
+  const orders = store.orders;
+  const o = orders.find(function(x){ return x.id === reqId; });
+  if(!o || o.status !== "pending") return;
+
+  o.status = "approved";
+  store.orders = orders;
+
+  // إضافة الرصيد للمستخدم
+  const cur = getBalance(o.userPhone);
+  setBalance(cur + (+o.amount), o.userPhone);
+
+  const txs = getTx(o.userPhone);
+  txs.unshift({ title: "شحن رصيد (موافقة إدارية)", amount: +o.amount, time: Date.now() });
+  setTx(txs, o.userPhone);
+
+  pushNotif(o.userPhone, "🎉 تم تأكيد طلب شحن الرصيد رقم #" + o.id + " وإضافة " + money(o.amount) + " USDT لحسابك!", "ok");
+  toast("✅ تم إضافة الرصيد للمستخدم بنجاح");
+  renderAdminPanel();
+}
+
+async function rejectTopup(reqId){
+  if(!can("topups")) return;
+  if(!await showConfirm("هل أنت تأكد من رفض طلب الشحن هذا؟", "رفض الشحن", "warn")) return;
+
+  await syncFromCloud();
+
+  const orders = store.orders;
+  const o = orders.find(function(x){ return x.id === reqId; });
+  if(!o || o.status !== "pending") return;
+
+  o.status = "rejected";
+  store.orders = orders;
+
+  pushNotif(o.userPhone, "❌ تم رفض طلب شحن الرصيد رقم #" + o.id + " (تحقق من TXID المعاملة).", "err");
+  toast("تم رفض طلب الشحن");
+  renderAdminPanel();
+}
+
+function renderWithdrawsList(){
+  const withdraws = store.orders.filter(function(o){ return o.type === "withdraw" && o.status === "pending"; });
+  const container = document.getElementById("withdrawList");
+
+  if(!withdraws.length){
+    container.innerHTML = '<div style="font-size:12px;color:var(--mut);text-align:center;padding:10px">لا توجد طلبات استرجاع معلّقة</div>';
+    return;
+  }
+
+  container.innerHTML = '<table class="tbl"><thead><tr><th>#</th><th>المستخدم</th><th>المبلغ</th><th>المحفظة</th><th>القرار</th></tr></thead><tbody>' +
+    withdraws.map(function(o){
+      return '<tr>' +
+        '<td><b>#' + o.id + '</b></td>' +
+        '<td><b>' + esc(o.userName) + '</b></td>' +
+        '<td><b style="color:var(--danger)">' + money(o.amount) + ' USDT</b></td>' +
+        '<td><code>' + esc(o.wallet) + '</code></td>' +
+        '<td><div style="display:flex;gap:4px">' +
+          '<button class="mini ok" onclick="approveWithdraw(' + o.id + ')">تم التحويل</button>' +
+          '<button class="mini no" onclick="rejectWithdraw(' + o.id + ')">رفض</button>' +
+        '</div></td>' +
+        '</tr>';
+    }).join("") + '</tbody></table>';
+}
+
+async function approveWithdraw(reqId){
+  if(!can("topups")) return;
+  await syncFromCloud();
+
+  const orders = store.orders;
+  const o = orders.find(function(x){ return x.id === reqId; });
+  if(!o || o.status !== "pending") return;
+
+  const cur = getBalance(o.userPhone);
+  if(cur < +o.amount){
+    return showAlert("رصيد المستخدم غير كافٍ لإتمام عملية الخصم والاسترجاع!");
+  }
+
+  o.status = "approved";
+  store.orders = orders;
+
+  // خصم المبلغ من رصيد المستخدم
+  setBalance(cur - (+o.amount), o.userPhone);
+
+  const txs = getTx(o.userPhone);
+  txs.unshift({ title: "استرجاع رصيد لمحفظتك الخارجية", amount: -o.amount, time: Date.now() });
+  setTx(txs, o.userPhone);
+
+  pushNotif(o.userPhone, "✅ تم الموافقة على طلب استرجاع الرصيد رقم #" + o.id + " وتحويل " + money(o.amount) + " USDT لمحفظتك.", "ok");
+  toast("✅ تم الخصم والموافقة على الاسترجاع");
+  renderAdminPanel();
+}
+
+async function rejectWithdraw(reqId){
+  if(!can("topups")) return;
+  if(!await showConfirm("هل أنت تأكد من رفض طلب الاسترجاع هذا؟", "رفض الاسترجاع", "warn")) return;
+
+  await syncFromCloud();
+
+  const orders = store.orders;
+  const o = orders.find(function(x){ return x.id === reqId; });
+  if(!o || o.status !== "pending") return;
+
+  o.status = "rejected";
+  store.orders = orders;
+
+  pushNotif(o.userPhone, "❌ تم رفض طلب استرجاع الرصيد رقم #" + o.id + ".", "err");
+  toast("تم رفض طلب الاسترجاع");
+  renderAdminPanel();
+}
+
+/* --- 4) جدول المستخدمين والتعديل اليدوي للرصيد --- */
+function renderUsersTable(){
+  const users = store.users;
+  const tbl = document.getElementById("usersTable");
+
+  if(!users.length){
+    tbl.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--mut);padding:15px">لا يوجد مستخدمون بعد</td></tr>';
+    return;
+  }
+
+  tbl.innerHTML = '<thead><tr><th>الاسم</th><th>الرقم</th><th>الرصيد الحقيقي</th><th>إجراء</th></tr></thead><tbody>' +
+    users.map(function(u){
+      const bal = getBalance(u.phone);
+      return '<tr class="urow" onclick="openUserModal(\'' + esc(u.phone) + '\')">' +
+        '<td><b>' + esc(u.name) + '</b></td>' +
+        '<td><code>' + esc(u.phone) + '</code></td>' +
+        '<td><b style="color:var(--accent)">' + money(bal) + ' USDT</b></td>' +
+        '<td><button class="mini gold">إدارة الرصيد</button></td>' +
+        '</tr>';
+    }).join("") + '</tbody>';
+}
+
+let activeEditPhone = null;
+function openUserModal(phone){
+  const u = store.users.find(function(x){ return x.phone === phone; });
+  if(!u) return;
+  activeEditPhone = phone;
+  const bal = getBalance(phone);
+
+  document.getElementById("umInfo").innerHTML =
+    '<div class="k">الاسم:</div><div class="v"><b>' + esc(u.name) + '</b></div>' +
+    '<div class="k">الرقم:</div><div class="v"><code>' + esc(u.phone) + '</code></div>' +
+    '<div class="k">الرصيد الحالي:</div><div class="v"><b style="color:var(--accent);font-size:16px">' + money(bal) + ' USDT</b></div>';
+
+  document.getElementById("umAmount").value = "";
+  document.getElementById("umNote").value = "";
+  document.getElementById("umMsg").textContent = "";
+  document.getElementById("userModal").classList.add("show");
+}
+
+async function adminAdjust(sign){
+  if(!activeEditPhone) return;
+  const amt = parseFloat(document.getElementById("umAmount").value);
+  const note = document.getElementById("umNote").value.trim() || "تعديل إداري للرصيد";
+
+  if(!amt || amt <= 0) return setErr("umMsg", "❌ أدخل مبلغًا صحيحًا");
+
+  await syncFromCloud();
+
+  const cur = getBalance(activeEditPhone);
+  const delta = amt * sign;
+  const next = cur + delta;
+
+  if(next < 0) return setErr("umMsg", "❌ لا يمكن خصم مبلغ أكثر من رصيد المستخدم الحالي!");
+
+  setBalance(next, activeEditPhone);
+
+  const txs = getTx(activeEditPhone);
+  txs.unshift({ title: note, amount: delta, time: Date.now() });
+  setTx(txs, activeEditPhone);
+
+  pushNotif(activeEditPhone, (sign > 0 ? "➕ تمت إضافة " : "➖ تم خصم ") + money(amt) + " USDT إلى حسابك. الملاحظة: " + note, sign > 0 ? "ok" : "err");
+
+  closeAll();
+  toast("✅ تم تعديل رصيد المستخدم بنجاح");
+  refreshAll();
+}
+
+/* --- 5) إدارة العروض الخصومات --- */
+function renderPromosAdmin(){
+  const prods = store.products;
+  const sel = document.getElementById("prProduct");
+  sel.innerHTML = prods.map(function(p){ return '<option value="' + p.id + '">' + esc(p.name) + '</option>'; }).join("");
+
+  const list = store.promos;
+  const container = document.getElementById("promoTable");
+
+  if(!list.length){
+    container.innerHTML = '<div style="font-size:12px;color:var(--mut);text-align:center;padding:10px">لا توجد عروض مضافة</div>';
+    return;
+  }
+
+  container.innerHTML = '<table class="tbl"><thead><tr><th>العنوان</th><th>الخصم</th><th>النطاق</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>' +
+    list.map(function(pr, idx){
+      return '<tr>' +
+        '<td><b>' + esc(pr.title) + '</b></td>' +
+        '<td><b>' + pr.percent + '%</b></td>' +
+        '<td>' + (pr.scope === "all" ? "كل الباقات" : "باقة محددة") + '</td>' +
+        '<td><button class="mini ' + (pr.active ? "ok" : "no") + '" onclick="togglePromo(' + idx + ')">' + (pr.active ? "مفعّل" : "معطّل") + '</button></td>' +
+        '<td><button class="mini no" onclick="delPromo(' + idx + ')">حذف</button></td>' +
+        '</tr>';
+    }).join("") + '</tbody></table>';
+}
+
+async function addPromo(){
+  if(!can("promos")) return;
+  const title = document.getElementById("prTitle").value.trim();
+  const percent = parseFloat(document.getElementById("prPercent").value);
+  const scope = document.getElementById("prScope").value;
+  const productId = scope === "product" ? document.getElementById("prProduct").value : null;
+
+  if(!title) return setErr("prMsg", "❌ أدخل عنوان العرض");
+  if(!percent || percent <= 0 || percent > 90) return setErr("prMsg", "❌ نسبة الخصم غير صحيحة (1-90%)");
+
+  await syncFromCloud();
+
+  const promos = store.promos;
+  promos.push({
+    title: title,
+    percent: percent,
+    scope: scope,
+    productId: productId,
+    active: true,
+    time: Date.now()
+  });
+
+  store.promos = promos;
+  document.getElementById("prTitle").value = "";
+  document.getElementById("prPercent").value = "";
+  setOk("prMsg", "✅ تم إضافة العرض بنجاح!");
+  renderAdminPanel();
+  refreshAll();
+}
+
+async function togglePromo(idx){
+  if(!can("promos")) return;
+  await syncFromCloud();
+  const promos = store.promos;
+  if(promos[idx]){
+    promos[idx].active = !promos[idx].active;
+    store.promos = promos;
+    renderAdminPanel();
+    refreshAll();
+  }
+}
+
+async function delPromo(idx){
+  if(!can("promos")) return;
+  await syncFromCloud();
+  const promos = store.promos;
+  promos.splice(idx, 1);
+  store.promos = promos;
+  renderAdminPanel();
+  refreshAll();
+}
+
+/* --- 6) إدارة الباقات (إضافة / حذف) --- */
+function renderProductsAdmin(){
+  const prods = store.products;
+  const tbl = document.getElementById("prodTable");
+
+  if(!prods.length){
+    tbl.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--mut);padding:15px">لا توجد باقات مضافة</td></tr>';
+    return;
+  }
+
+  tbl.innerHTML = '<thead><tr><th>#</th><th>الباقة</th><th>السعر</th><th>إجراء</th></tr></thead><tbody>' +
+    prods.map(function(p){
+      return '<tr>' +
+        '<td><b>#' + p.id + '</b></td>' +
+        '<td>' + (p.img || '🪙') + ' <b>' + esc(p.name) + '</b></td>' +
+        '<td><b>' + money(p.price) + ' USDT</b></td>' +
+        '<td><button class="mini no" onclick="delProduct(' + p.id + ')">حذف ✕</button></td>' +
+        '</tr>';
+    }).join("") + '</tbody>';
+}
+
+async function addProduct(){
+  if(!can("products")) return;
+  const name  = document.getElementById("npName").value.trim();
+  const price = parseFloat(document.getElementById("npPrice").value);
+  const old   = parseFloat(document.getElementById("npOld").value) || 0;
+  const cat   = document.getElementById("npCat").value.trim() || "شدات UC";
+  const img   = document.getElementById("npImg").value.trim() || "🪙";
+  const photoTxt = document.getElementById("npPhoto").value.trim();
+  const desc  = document.getElementById("npDesc").value.trim();
+
+  if(!name) return showAlert("أدخل اسم الباقة");
+  if(!price || price <= 0) return showAlert("أدخل سعرًا صحيحًا");
+
+  const photos = photoTxt ? photoTxt.split("\n").map(function(s){ return s.trim(); }).filter(Boolean) : [];
+
+  await syncFromCloud();
+
+  const prods = store.products;
+  const newId = prods.length ? Math.max.apply(null, prods.map(function(p){ return p.id; })) + 1 : 1;
+
+  prods.push({
+    id: newId,
+    name: name,
+    price: price,
+    old: old,
+    cat: cat,
+    img: img,
+    desc: desc,
+    photos: photos
+  });
+
+  store.products = prods;
+
+  document.getElementById("npName").value = "";
+  document.getElementById("npPrice").value = "";
+  document.getElementById("npOld").value = "";
+  document.getElementById("npPhoto").value = "";
+  document.getElementById("npDesc").value = "";
+
+  toast("✅ تم إضافة باقة الشدات بنجاح");
+  renderAdminPanel();
+  refreshAll();
+}
+
+async function delProduct(pid){
+  if(!can("products")) return;
+  if(!await showConfirm("هل أنت تأكد من حذف هذه الباقة؟", "حذف باقة", "error")) return;
+
+  await syncFromCloud();
+  let prods = store.products;
+  prods = prods.filter(function(p){ return p.id !== pid; });
+  store.products = prods;
+
+  toast("تم حذف الباقة");
+  renderAdminPanel();
+  refreshAll();
+}
+
+/* --- 7) التحكم بالبانر والمؤقت --- */
+function populateBannerForm(){
+  const b = getBanner();
+  document.getElementById("bnShow").checked = !!b.show;
+  document.getElementById("bnKicker").value = b.kicker || "";
+  document.getElementById("bnBig").value = b.big || "";
+  document.getElementById("bnEndsLabel").value = b.endsLabel || "";
+  document.getElementById("bnTimer").checked = !!b.timer;
+  document.getElementById("bnTimerMode").value = b.timerMode || "daily";
+  document.getElementById("bnTimerEnd").value = b.timerEnd || "";
+  document.getElementById("bnEndedMsg").checked = !!b.endedMsg;
+  document.getElementById("bnTimerEndWrap").style.display = (b.timerMode === "custom") ? "block" : "none";
+}
+
+async function saveBanner(){
+  if(!can("banner")) return;
+  await syncFromCloud();
+
+  const b = {
+    show: document.getElementById("bnShow").checked,
+    kicker: document.getElementById("bnKicker").value.trim(),
+    big: document.getElementById("bnBig").value.trim(),
+    endsLabel: document.getElementById("bnEndsLabel").value.trim(),
+    timer: document.getElementById("bnTimer").checked,
+    timerMode: document.getElementById("bnTimerMode").value,
+    timerEnd: document.getElementById("bnTimerEnd").value,
+    endedMsg: document.getElementById("bnEndedMsg").checked
+  };
+
+  setBanner(b);
+  setOk("bnMsg", "✅ تم حفظ إعدادات البانر والمؤقت بنجاح!");
+  refreshAll();
+}
+
+/* --- 8) إعدادات بوت تيليجرام --- */
+function populateConfigForm(){
+  const cfg = store.cfg;
+  document.getElementById("cfgToken").value = cfg.token || "";
+  document.getElementById("cfgChat").value  = cfg.chat || "";
+  document.getElementById("cfgWallet").value = cfg.wallet || "";
+  document.getElementById("cfgSupport").value = cfg.support || "";
+}
+
+async function saveCfg(){
+  if(!can("config")) return;
+  await syncFromCloud();
+
+  const cfg = {
+    token: document.getElementById("cfgToken").value.trim(),
+    chat: document.getElementById("cfgChat").value.trim(),
+    wallet: document.getElementById("cfgWallet").value.trim(),
+    support: document.getElementById("cfgSupport").value.trim()
+  };
+
+  store.cfg = cfg;
+  setOk("cfgMsg", "💾 تم حفظ الإعدادات بنجاح!");
+}
+
+async function testTG(){
+  const cfg = store.cfg;
+  if(!cfg.token || !cfg.chat) return setErr("cfgMsg", "❌ ادخل التوكن و Chat ID أولاً");
+
+  const url = "https://api.telegram.org/bot" + cfg.token + "/sendMessage";
+  try{
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: cfg.chat, text: "🔔 اختبار الاتصال بنجاح من متجر LevelUp!" })
+    });
+    if(res.ok) setOk("cfgMsg", "✅ تم إرسال رسالة الاختبار بنجاح إلى تيليجرام!");
+    else setErr("cfgMsg", "❌ فشل الإرسال — تأكد من التوكن و Chat ID");
+  }catch(e){
+    setErr("cfgMsg", "❌ خطأ في الاتصال بسيرفر تيليجرام");
+  }
+}
+
+async function notifyAdmin(text){
+  const cfg = store.cfg;
+  if(!cfg.token || !cfg.chat) return;
+  const url = "https://api.telegram.org/bot" + cfg.token + "/sendMessage";
+  try{
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: cfg.chat, text: text, parse_mode: "HTML" })
+    });
+  }catch(e){}
+}
+
+/* --- الاستماع لأوامر تيليجرام (Telegram Polling) --- */
+let pollingInterval = null;
+let lastUpdateId = 0;
+
+function togglePolling(){
+  const btn = document.getElementById("pollBtn");
+  if(pollingInterval){
+    clearInterval(pollingInterval);
+    pollingInterval = null;
+    btn.textContent = "🤖 تشغيل الاستماع لأوامر تيليجرام";
+    setOk("pollMsg", "تم إيقاف الاستماع");
+  } else {
+    pollingInterval = setInterval(pollTG, 3500);
+    btn.textContent = "🛑 إيقاف الاستماع الأوتوماتيكي";
+    setOk("pollMsg", "🤖 الاستماع شغال الآن للأوامر...");
+  }
+}
+
+async function pollTG(){
+  const cfg = store.cfg;
+  if(!cfg.token) return;
+  const url = "https://api.telegram.org/bot" + cfg.token + "/getUpdates?offset=" + (lastUpdateId + 1);
+
+  try{
+    const res = await fetch(url);
+    if(!res.ok) return;
+    const data = await res.json();
+    if(data.result && data.result.length){
+      for(let i=0; i<data.result.length; i++){
+        const upd = data.result[i];
+        lastUpdateId = upd.update_id;
+        if(upd.message && upd.message.text){
+          await handleTGCommand(upd.message.text, upd.message.chat.id);
+        }
+      }
+    }
+  }catch(e){}
+}
+
+async function handleTGCommand(cmdText, chatId){
+  const cfg = store.cfg;
+  if(String(chatId) !== String(cfg.chat)) return; // استقبال الأوامر من المدير فقط
+
+  const parts = cmdText.trim().split(" ");
+  const cmd = parts[0].toLowerCase();
+
+  if(cmd === "/approve"){
+    const reqId = parseInt(parts[1]);
+    if(reqId) await approveOrder(reqId);
+  } else if(cmd === "/reject"){
+    const reqId = parseInt(parts[1]);
+    if(reqId) await rejectOrder(reqId);
+  } else if(cmd === "/orders"){
+    const pending = store.orders.filter(function(o){ return o.status === "pending"; });
+    let msg = "📋 <b>الطلبات المعلّقة (" + pending.length + "):</b>\n\n";
+    pending.forEach(function(o){
+      msg += "• <b>#" + o.id + "</b> | " + esc(o.userName) + " | " + money(o.amount) + " USDT\n";
+    });
+    notifyAdmin(msg);
+  } else if(cmd === "/stats"){
+    const sales = store.orders.reduce(function(acc, o){ return acc + (o.status === "approved" ? (+o.amount||0) : 0); }, 0);
+    notifyAdmin("📊 <b>إحصائيات المتجر:</b>\n\n👥 عدد المستخدمين: " + store.users.length + "\n💰 إجمالي المبيعات: " + money(sales) + " USDT");
+  }
+}
+
+/* --- 9) سجل كل الطلبات المكتملة والمرفوضة --- */
+function renderAllOrdersTable(){
+  const orders = store.orders;
+  const tbl = document.getElementById("ordersTable");
+
+  if(!orders.length){
+    tbl.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--mut);padding:15px">لا توجد طلبات سابقة</td></tr>';
+    return;
+  }
+
+  tbl.innerHTML = '<thead><tr><th>#</th><th>المستخدم</th><th>النوع</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody>' +
+    orders.map(function(o){
+      const typeLabel = o.type === "topup" ? "شحن رصيد" : o.type === "withdraw" ? "استرجاع" : "شراء شدات";
+      const stClass = o.status === "approved" ? "b-ok" : o.status === "rejected" ? "b-no" : "b-wait";
+      const stText  = o.status === "approved" ? "مكتمل" : o.status === "rejected" ? "مرفوض" : "معلّق";
+
+      return '<tr>' +
+        '<td><b>#' + o.id + '</b></td>' +
+        '<td><b>' + esc(o.userName) + '</b></td>' +
+        '<td>' + typeLabel + '</td>' +
+        '<td><b>' + money(o.amount) + ' USDT</b></td>' +
+        '<td><span class="badge ' + stClass + '">' + stText + '</span></td>' +
+        '</tr>';
+    }).join("") + '</tbody>';
+}
+
+/* --- 10) تفريغ وحذف كل البيانات السحابية --- */
+async function wipeAll(){
+  if(!isOwner()) return;
+  if(!await showConfirm("⚠️ حذارِ! هل أنت تأكد تمامًا من مسح وحذف جميع البيانات (المستخدمين، الطلبات، الباقات) نهائيًا؟", "مسح شامل للبيانات", "error")) return;
+
+  db = {
+    products: DEFAULT_PRODUCTS,
+    users: [],
+    orders: [],
+    promos: [],
+    banner: DEFAULT_BANNER,
+    cfg: {},
+    balances: {},
+    txs: {},
+    notifs: {},
+    reqSeq: 0,
+    admins: []
+  };
+
+  await syncToCloud();
+  showAlert("تم مسح كافة البيانات وإعادتها للوضع الافتراضي بنجاح.");
+  refreshAll();
+  renderAdminPanel();
+}
+
+/* ═══════════ تحديث وشاشات التشغيل ═══════════ */
+function refreshAll(){
+  renderProducts();
+  renderDeals();
+  renderBalancePage();
+  renderAccountPage();
+  updateMailBadge();
+}
+
+// البدء عند تحميل الصفحة
+window.addEventListener("DOMContentLoaded", async function(){
+  await syncFromCloud();
+  
+  if(store.session){
+    applySessionUI();
+  }
+  
+  refreshAll();
+});
+</script>
+
+</body>
+</html>
